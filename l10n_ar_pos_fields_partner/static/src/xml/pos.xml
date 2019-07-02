@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates id="template" inherit_id="point_of_sale.template">
+    <t t-extend="ClientDetails">
+        <t t-jquery='.client-details-right' t-operation='append'>
+
+            <div class='client-detail'>
+            <div>
+                <span class='label'>Responsabilidad AFIP</span>
+                <t t-if='partner.afip_responsability_type_id'>
+                    <span class='detail client-id'><t t-esc='partner.afip_responsability_type_id[1]'/></span>
+                </t>
+            </div>
+            <div>
+                <span class='label'>Tipo Documento</span>
+                <t t-if='partner.main_id_category_id'>
+                    <span class='detail client-id'><t t-esc='partner.main_id_category_id[1]'/></span>
+                </t>
+            </div>
+            <div>
+                <span class='label'>Número de documento</span>
+                <t t-if='partner.main_id_number'>
+                    <span class='detail client-id'><t t-esc='partner.main_id_number'/></span>
+                </t>
+            </div>
+            </div>
+        </t>
+    </t>
+    <t t-extend="ClientListScreenWidget">
+        <t t-jquery='.client-list' t-operation='replace'>
+            <table class='client-list'>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Address</th>
+                        <th>Responsabilidad AFIP</th>
+                        <th>Tipo Documento</th>
+                        <th>Número de documento</th>
+                    </tr>
+                </thead>
+                <tbody class='client-list-contents'>
+                </tbody>
+            </table>
+        </t>
+    </t>
+    <t t-extend="ClientLine">
+        <t t-jquery=".client-line" t-operation="inner">
+            <td><t t-esc='partner.name' /></td>
+            <td><t t-esc='partner.address' /></td>
+            <td><t t-esc='partner.afip_responsability_type_id[1] or ""' /></td>
+            <td><t t-esc='partner.main_id_category_id[1] or ""' /></td>
+            <td><t t-esc='partner.main_id_number or ""' /></td>
+        </t>
+    </t>
+
+    <t t-extend="ClientDetailsEdit">
+        <t t-jquery=".client-details-right" t-operation="append">
+            <div class='client-detail'>
+                        <span class='label'>Resp. AFIP</span>
+                        <select class='detail client-address-country needsclick' name='afip_responsability_type_id'>
+                            <option value=''>None</option>
+                            <t t-foreach='widget.pos.responsability_type' t-as='responsability'>
+                                <option t-att-value='responsability.id' t-att-selected="partner.afip_responsability_type_id ? ((responsability.id === partner.afip_responsability_type_id[0]) ? true : undefined) : undefined">
+                                    <t t-esc='responsability.name'/>
+                                </option>
+                            </t>
+                        </select>
+                    </div>
+            <div class='client-detail'>
+                        <span class='label'>Tipo Doc.</span>
+                        <select class='detail client-address-country needsclick' name='main_id_category_id'>
+                            <option value=''>None</option>
+                            <t t-foreach='widget.pos.category_id' t-as='category'>
+                                <option t-att-value='category.id' t-att-selected="partner.main_id_category_id ? ((category.id === partner.main_id_category_id[0]) ? true : undefined) : undefined">
+                                    <t t-esc='category.name'/>
+                                </option>
+                            </t>
+                        </select>
+                    </div>
+
+            <div class='client-detail'>
+             <span class='label'>Nro. doc.</span>
+                <input class='detail required' name='main_id_number' t-att-value='partner.main_id_number' placeholder='Número de documento'></input>
+            </div>
+	    </t>
+    </t>
+
+</templates>
