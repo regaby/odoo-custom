@@ -1,4 +1,4 @@
-odoo.define('pos_fields_partner.PosModel', function (require) {
+odoo.define('l10n_ar_pos_fields_partner.PosModel', function (require) {
 "use strict";
 
 var core = require('web.core');

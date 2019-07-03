@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <template id="assets_backend" name="pos_einvoice_ar" inherit_id="point_of_sale.assets">
+    <template id="assets_backend" name="l10n_ar_pos_einvoice" inherit_id="point_of_sale.assets">
         <xpath expr="." position="inside">
-            <script type="text/javascript" src="/pos_einvoice_ar/static/src/js/pos.js"></script>
+            <script type="text/javascript" src="/l10n_ar_pos_einvoice/static/src/js/pos.js"></script>
         </xpath>
     </template>
 </odoo>

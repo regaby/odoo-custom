@@ -1,4 +1,4 @@
-odoo.define('pos_fields_partner.screens', function (require) {
+odoo.define('l10n_ar_pos_fields_partner.screens', function (require) {
 "use strict";
 
 var PosBaseWidget = require('point_of_sale.BaseWidget');

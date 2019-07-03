@@ -1,4 +1,4 @@
-odoo.define('pos_einvoice_ar.PosModel', function(require){
+odoo.define('l10n_ar_pos_einvoice.PosModel', function(require){
 "use strict";
 
 
