@@ -34,14 +34,14 @@ var round_pr = utils.round_precision;
     },
 
 
-    });  
-
-  
+    });
 
 
 
 
 
 
-    
+
+
+
 });
