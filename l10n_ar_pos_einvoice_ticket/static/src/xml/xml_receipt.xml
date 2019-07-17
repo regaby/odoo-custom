@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-extend="XmlReceipt">
+        <t t-jquery="t[t-if*='!receipt.company.logo']" t-operation="after">
+            CUIT: <t t-esc="order.main_id_number"/><br />
+            Ing. Brutos: <t t-esc="order.gross_income_number"/><br />
+            Inicio de actividades: <t t-esc="order.start_date"/><br />
+            <t t-esc="order.afip_responsability_type_id"/><br />
+            Dirección:<t t-esc="order.street"/><br />
+        </t>
+
+        <t t-jquery="t[t-if*='receipt.cashier']" t-operation="before">
+            <t t-if="receipt.invoice_number and widget.pos.config.receipt_invoice_number">
+                <div>--------------------------------</div>
+                <!-- N° de Factura: <t t-esc="order.invoice_number"/><br /> -->
+                <strong>
+                FACTURA <t t-esc="receipt.invoice_letter"/><br />
+                N° DE FACTURA: <t t-esc="receipt.invoice_number"/><br />
+                FECHA: <t t-esc="receipt.formatted_validation_date"/></strong>
+            </t>
+            <t t-set="client" t-value="receipt.get_client()"/>
+            <t t-if="client and widget.pos.config.receipt_customer_vat">
+                <t t-set="client" t-value="receipt.get_client()"/>
+                CLIENTE: <t t-esc="client['name']"/><br />
+                <t t-if="client['main_id_number']">
+                    CUIT: <t t-esc="client['main_id_number']"/><br />
+                </t>
+                <t t-if="client['afip_responsability_type_id']">
+                    <t t-esc="client['afip_responsability_type_id'][1]"/><br />
+                </t>
+                <t t-if="client['street']">
+                    CALLE: <t t-esc="client['street']"/><br />
+                </t>
+                <t t-if="client['email']">
+                    Email: <t t-esc="client['email']"/><br />
+                </t>
+                <t t-if="client['phone'] or client['mobile']">
+                    Tel: <t t-esc="client['phone'] || client['mobile']"/><br />
+                </t>
+                <t t-if="client['website']">
+                    Website: <t t-esc="client['website']"/><br />
+                </t>
+                <div>__________________________________________</div>
+                REF. INTERNA: <t t-esc="receipt.name"/>
+                <div>__________________________________________</div>
+
+            </t>
+        </t>
+        <t t-jquery=".before-footer" t-operation="after">
+            <t t-if="receipt.afip_auth_code and widget.pos.config.receipt_invoice_number">
+                <br />
+                <div style="overflow: hidden;">
+                    <img t-attf-src="data:image/*;base64,{{receipt.afip_barcode_img}}" style="height: 58px;  width: 300px;"/>
+                </div>
+                <div style='text-align:center'>
+                    <t t-esc="receipt.afip_barcode"/><br />
+                </div>
+                CAE: <t t-esc="receipt.afip_auth_code"/><br />
+                Vto. CAE: <t t-esc="receipt.afip_cae_due"/><br />
+            </t>
+        </t>
+
+
+    </t>
+
+</templates>

@@ -42,6 +42,9 @@
                 <t t-if="client['phone'] or client['mobile']">
                     Tel: <t t-esc="client['phone'] || client['mobile']"/><br />
                 </t>
+                <t t-if="client['website']">
+                    Website: <t t-esc="client['website']"/><br />
+                </t>
                 <div>__________________________________________</div>
                 REF. INTERNA: <t t-esc="order.name"/>
                 <div>__________________________________________</div>
@@ -128,33 +131,6 @@
                     </td>
                 </tr>
             </table>
-        </t>
-    </t>
-
-    <t t-extend="XmlReceipt">
-        <t t-jquery="t[t-if*='receipt.cashier']" t-operation="before">
-            <t t-if="order.invoice_number and widget.pos.config.receipt_invoice_number">
-                <div>--------------------------------</div>
-                N° de Factura: <t t-esc="order.invoice_number"/><br />
-            </t>
-            <t t-set="client" t-value="order.get_client()"/>
-            <t t-if="client and widget.pos.config.receipt_customer_vat">
-                <t t-set="client" t-value="order.get_client()"/>
-                Cliente: <t t-esc="client['name']"/><br />
-                <t t-if="client['street']">
-                    Calle: <t t-esc="client['street']"/><br />
-                </t>
-                <t t-if="client['email']">
-                    Email: <t t-esc="client['email']"/><br />
-                </t>
-                <t t-if="client['phone'] or client['mobile']">
-                    Tel: <t t-esc="client['phone'] || client['mobile']"/><br />
-                </t>
-                <t t-if="client['website']">
-                    Website: <t t-esc="client['website']"/><br />
-                </t>
-
-            </t>
         </t>
     </t>
 

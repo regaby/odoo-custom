@@ -76,13 +76,58 @@ odoo.define('l10n_ar_pos_einvoice_ticket', function (require) {
                         if (orders[0]['invoice_id']) {
                             // el array 1 de Split es el que tiene el nro!
                             var invoice_number = orders[0]['invoice_id'][1].split(" ")[1];
+                            var invoice_letter = orders[0]['invoice_id'][1].split(" ")[0].substring(3, 4);
+                            var invoice_id = orders[0]['invoice_id'][0]
                             self.receipt_data['order']['invoice_number'] = invoice_number;
+                            self.receipt_data['order']['invoice_letter'] = invoice_letter;
+                            //----
+                            var partner_id = self['pos']['company']['partner_id'][0];
+                            rpc.query({
+                                 model: 'res.partner',
+                                 method: 'search_read',
+                                 args: [[['id', '=', partner_id]], ['start_date',
+                                                                    'main_id_number',
+                                                                    'gross_income_number',
+                                                                    'afip_responsability_type_id',
+                                                                    'street', 'city', 'state_id', 'country_id']],
+                                }
+
+                             ).then(function (company_partner) {
+                                self.receipt_data['order']['main_id_number'] = company_partner[0]['main_id_number'];
+                                self.receipt_data['order']['gross_income_number'] = company_partner[0]['gross_income_number'];
+                                self.receipt_data['order']['start_date'] = company_partner[0]['start_date'];
+                                self.receipt_data['order']['afip_responsability_type_id'] = company_partner[0]['afip_responsability_type_id'][1];
+                                self.receipt_data['order']['street'] = company_partner[0]['street'] + ', ' +
+                                                                 company_partner[0]['city'] + ', ' +
+                                                                 company_partner[0]['state_id'][1] + ', ' +
+                                                                 company_partner[0]['country_id'][1];
+                                //---------
+                                rpc.query({
+                                     model: 'account.invoice',
+                                     method: 'search_read',
+                                     args: [[['id', '=', invoice_id]], ['afip_auth_code',
+                                                                        'afip_cae_due',
+                                                                        'afip_barcode',
+                                                                        'afip_barcode_img']],
+                                    }
+
+                                 ).then(function (invoices) {
+                                    self.receipt_data['order']['afip_barcode'] = invoices[0]['afip_barcode'];
+                                    self.receipt_data['order']['afip_auth_code'] = invoices[0]['afip_auth_code'];
+                                    self.receipt_data['order']['afip_cae_due'] = invoices[0]['afip_cae_due'];
+                                    self.receipt_data['order']['afip_barcode_img'] = invoices[0]['afip_barcode_img'];
+
+                                    console.log('self.receipt_data', self.receipt_data);
+                                    var receipt = qweb.render('XmlReceipt', self.receipt_data);
+                                    self.pos.proxy.print_receipt(receipt);
+
+                                 });
+
+                             });
+
                         }
                     }
 
-
-                    var receipt = qweb.render('XmlReceipt', self.receipt_data);
-                    self.pos.proxy.print_receipt(receipt);
                 });
             } else {
                 this._super();
@@ -110,7 +155,6 @@ odoo.define('l10n_ar_pos_einvoice_ticket', function (require) {
                     if (orders.length > 0 && orders[0]['invoice_id'] && orders[0]['invoice_id'][1]) {
                         var invoice_number = orders[0]['invoice_id'][1].split(" ")[1];
                         var invoice_letter = orders[0]['invoice_id'][1].split(" ")[0].substring(3, 4);
-                        console.log('invoice_letter', invoice_letter);
                         var invoice_id = orders[0]['invoice_id'][0]
                         self.pos.get_order()['invoice_number'] = invoice_number;
                         self.pos.get_order()['invoice_letter'] = invoice_letter;
