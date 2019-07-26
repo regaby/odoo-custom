@@ -2,27 +2,28 @@
 <templates id="template" xml:space="preserve">
 
     <t t-extend="XmlReceipt">
-        <t t-jquery="t[t-if*='!receipt.company.logo']" t-operation="after">
-            CUIT: <t t-esc="receipt.main_id_number"/><br />
-            Ing. Brutos: <t t-esc="receipt.gross_income_number"/><br />
-            Inicio de actividades: <t t-esc="receipt.start_date"/><br />
-            <t t-esc="receipt.afip_responsability_type_id"/><br />
-            Dirección:<t t-esc="receipt.street"/><br />
+        <t t-jquery="t[t-if*='receipt.company.website']" t-operation="after">
+            <div> CUIT: <t t-esc="order.main_id_number"/><br />
+            Ing. Brutos: <t t-esc="order.gross_income_number"/><br />
+            Inicio de actividades: <t t-esc="order.start_date"/><br />
+            <t t-esc="order.afip_responsability_type_id"/><br />
+            Dirección:<t t-esc="order.street"/><br /></div>
         </t>
 
         <t t-jquery="t[t-if*='receipt.cashier']" t-operation="before">
+
             <t t-if="order.invoice_number and widget.pos.config.receipt_invoice_number">
                 <div>--------------------------------</div>
                 <!-- N° de Factura: <t t-esc="order.invoice_number"/><br /> -->
-                <strong>
-                FACTURA <t t-esc="order.invoice_letter"/><br />
-                N° DE FACTURA: <t t-esc="order.invoice_number"/><br />
-                FECHA: <t t-esc="receipt.formatted_validation_date"/></strong>
+                <div>
+                FACTURA <t t-esc="order.invoice_letter"/>
+                N°: <t t-esc="order.invoice_number"/><br />
+                FECHA: <t t-esc="receipt.date.localestring"/></div>
             </t>
             <t t-set="client" t-value="order.get_client()"/>
             <t t-if="client and widget.pos.config.receipt_customer_vat">
                 <t t-set="client" t-value="order.get_client()"/>
-                CLIENTE: <t t-esc="client['name']"/><br />
+                CLIENTE: <t t-esc="client['name']"/>
                 <t t-if="client['main_id_number']">
                     CUIT: <t t-esc="client['main_id_number']"/><br />
                 </t>
@@ -41,9 +42,6 @@
                 <t t-if="client['website']">
                     Website: <t t-esc="client['website']"/><br />
                 </t>
-                <div>__________________________________________</div>
-                REF. INTERNA: <t t-esc="receipt.name"/>
-                <div>__________________________________________</div>
 
             </t>
         </t>
@@ -51,16 +49,99 @@
             <t t-if="order.afip_auth_code and widget.pos.config.receipt_invoice_number">
                 <br />
                 <div style="overflow: hidden;">
-                    <img t-attf-src="data:image/*;base64,{{order.afip_barcode_img}}" style="height: 58px;  width: 300px;"/>
+                    <img t-attf-src="data:image/*;base64,{{order.afip_barcode_img}}"/>
                 </div>
                 <div style='text-align:center'>
                     <t t-esc="order.afip_barcode"/><br />
                 </div>
-                CAE: <t t-esc="order.afip_auth_code"/><br />
+                CAE: <t t-esc="order.afip_auth_code"/>
                 Vto. CAE: <t t-esc="order.afip_cae_due"/><br />
             </t>
         </t>
 
+        <t t-jquery=".orderlines" t-operation="replace">
+            <div class='orderlines' line-ratio='0.6' font='b'>
+                <t t-foreach='receipt.orderlines' t-as='line'>
+                    <t t-set='simple' t-value='line.discount === 0 and line.unit_name === "Unit(s)" and line.quantity === 1' />
+                    <t t-if='simple'>
+                        <line>
+                            <left><t t-esc='line.product_name_wrapped[0]' /></left>
+                            <right><value t-att-value-decimals='pos.currency.decimals'><t t-esc='line.price_display'
+                             /></value></right>
+                        </line>
+                        <t t-call="XmlReceiptWrappedProductNameLines"/>
+                    </t>
+                    <t t-if='!simple'>
+                        <line><left><t t-esc='line.product_name_wrapped[0]' /></left></line>
+                        <t t-call="XmlReceiptWrappedProductNameLines"/>
+                        <t t-if='line.discount !== 0'>
+                            <line indent='1'><left>Discount: <t t-esc='line.discount' />%</left></line>
+                        </t>
+                        <t t-if="order.invoice_letter == 'A'">
+                            <line indent='1'>
+                                <left>
+                                    <value t-att-value-decimals='pos.dp["Product Unit of Measure"]' value-autoint='on'>
+                                        <t t-esc='line.quantity' />
+                                    </value>
+                                    <t t-if='line.unit_name !== "Unit(s)"'>
+                                        <t t-esc='line.unit_name' />
+                                    </t>
+                                    x
+                                    <value t-att-value-decimals='pos.dp["Product Price"]'>
+                                        <t t-esc='line.price' />
+                                    </value>
+                                </left>
+                                <right>
+                                    <value t-att-value-decimals='pos.currency.decimals'><t t-esc='line.price_display'
+                                     /></value>
+                                </right>
+                            </line>
+                        </t>
+                        <t t-if="order.invoice_letter != 'A'">
+                            <line indent='1'>
+                                <left>
+                                    <value t-att-value-decimals='pos.dp["Product Unit of Measure"]' value-autoint='on'>
+                                        <t t-esc='line.quantity' />
+                                    </value>
+                                    <t t-if='line.unit_name !== "Unit(s)"'>
+                                        <t t-esc='line.unit_name' />
+                                    </t>
+                                    x
+                                    <value t-att-value-decimals='pos.dp["Product Price"]'>
+                                        <t t-esc='line.price_with_tax' />
+                                    </value>
+                                </left>
+                                <right>
+                                    <value t-att-value-decimals='pos.currency.decimals'><t t-esc='line.price_with_tax'
+                                     /></value>
+                                </right>
+                            </line>
+                        </t>
+
+                    </t>
+                </t>
+            </div>
+        </t>
+
+        <t t-jquery="t[t-if*='!taxincluded']" t-operation="replace">
+            <t t-if="order.invoice_letter == 'A'">
+                <t t-if='!taxincluded'>
+                    <line><right>- - - - - - - - - - - - - -</right></line>
+                    <line><left>Subtotal</left><right><value t-att-value-decimals='pos.currency.decimals'><t t-esc="receipt.subtotal" /></value></right></line>
+                    <t t-foreach='receipt.tax_details' t-as='tax'> <!--//A si es A muestro los impuestos-->
+                        <line>
+                            <left><t t-esc='tax.name' /></left>
+                            <right><value t-att-value-decimals='pos.currency.decimals'><t t-esc='tax.amount' /></value></right>
+                        </line>
+                    </t>
+                </t>
+            </t>
+
+            <t t-if="order.invoice_letter != 'A'">
+                <line>Holaaaaaaaaaaaaa</line>
+            </t>
+
+        </t>
 
     </t>
 
