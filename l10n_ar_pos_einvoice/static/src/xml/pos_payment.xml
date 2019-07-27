@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-extend="PaymentScreenWidget">
+        <t t-jquery=".payment-buttons" t-operation="replace">
+            <div class='payment-buttons'>
+                <div class='button js_set_customer'>
+                    <i class='fa fa-user' />
+                    <span class='js_customer_name'>
+                        <t t-if="widget.pos.get_client()">
+                            <t t-esc="widget.pos.get_client().name" />
+                        </t>
+                        <t t-if="!widget.pos.get_client()">
+                            Customer
+                        </t>
+                    </span>
+                </div>
+                <t t-if='widget.pos.config.iface_invoicing'>
+                    <t t-if='widget.pos.get_order()'>
+                        <div t-attf-class='button js_invoice #{ widget.pos.get_order().is_to_invoice() ? "highlight" : ""} '>
+                            <i class='fa fa-file-text-o' /> Factura Oficial AFIP
+                        </div>
+                    </t>
+                </t>
+                <t t-if='widget.pos.config.tip_product_id'>
+                    <div class='button js_tip'>
+                        <i class='fa fa-heart' /> Tip
+                    </div>
+                </t>
+                <t t-if='widget.pos.config.iface_cashdrawer'>
+                    <div class='button js_cashdrawer'>
+                        <i class='fa fa-archive' /> Open Cashbox
+                    </div>
+                </t>
+             </div>
+        </t>
+    </t>
+
+
+</templates>
