@@ -1,0 +1,20 @@
+<odoo>
+    <data>
+
+       <record model="ir.ui.view" id="invoice_form_sale_uom">
+            <field name="name">account.invoice.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//tree/field[@name='name']" position="after">
+                    <field name="product_qty_original"
+                                        string="Ordered Qty"
+                                        readonly="False"
+                                    />
+                    <field name="product_uom_original" options="{'no_open': True, 'no_create': True}" string="Unit of Measure Sale" groups="product.group_uom" readonly="False"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>
