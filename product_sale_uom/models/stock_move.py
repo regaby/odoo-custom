@@ -12,9 +12,10 @@ class StockMove(models.Model):
     def create(self, vals):
         """
         """
-        order_line = self.env['sale.order.line'].browse(vals['sale_line_id'])
-        vals['product_uom_original'] = order_line.product_uom_original.id
-        vals['product_qty_original'] = order_line.product_uom_qty_original
+        if 'sale_line_id' in vals.keys():
+            order_line = self.env['sale.order.line'].browse(vals['sale_line_id'])
+            vals['product_uom_original'] = order_line.product_uom_original.id
+            vals['product_qty_original'] = order_line.product_uom_qty_original
         move = super(StockMove, self).create(vals)
         return move
 
