@@ -12,5 +12,44 @@
             </field>
         </record>
 
+        <record id="product_template_form_view_procurement_button" model="ir.ui.view">
+        <field name="model">product.template</field>
+        <field name="inherit_id"
+               ref="stock.product_template_form_view_procurement_button"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_open_quants']" position="before">
+                <button type="object"
+                    name="action_open_quants"
+                    attrs="{'invisible':[('type', '!=', 'product')]}"
+                    class="oe_stat_button" icon="fa-building-o">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_value">
+                            <field name="uom_sale_qty_available" widget="statinfo" nolabel="1"/>
+                        </span>
+                        <span class="o_stat_text">
+                            <field name="uom_sale_id"/>
+                        </span>
+                    </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="product_form_view_procurement_button" model="ir.ui.view">
+        <field name="model">product.product</field>
+        <field name="inherit_id"
+               ref="stock.product_form_view_procurement_button"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='qty_available']/.." position="before">
+                <button class="oe_stat_button"
+                       name="%(stock.product_open_quants)d"
+                       icon="fa-building-o"
+                       type="action" attrs="{'invisible':[('type', '!=', 'product')]}">
+                    <field name="uom_sale_qty_available" widget="statinfo" string="On Hand"/>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
     </data>
 </odoo>
