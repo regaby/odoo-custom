@@ -144,7 +144,7 @@ odoo.define('l10n_ar_pos_einvoice_ticket', function (require) {
             var order = this.pos.get_order(); // Ok!!
             console.log('iface_print_via_proxy', this.pos.config.iface_print_via_proxy);
             console.log('receipt_invoice_number', this.pos.config.receipt_invoice_number);
-            console.log('is_to_invoice', is_to_invoice());
+            console.log('is_to_invoice', order.is_to_invoice());
 
             if (!this.pos.config.iface_print_via_proxy && this.pos.config.receipt_invoice_number && order.is_to_invoice()) {
                 var invoiced = new $.Deferred();
