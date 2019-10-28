@@ -152,6 +152,7 @@ odoo.define('l10n_ar_pos_einvoice_ticket', function (require) {
                     // invoice_id es un campo nativo de pos.order
                     fields: ['invoice_id']
                 }).then(function (orders) {
+                    console.log('orders', orders);
                     if (orders.length > 0 && orders[0]['invoice_id'] && orders[0]['invoice_id'][1]) {
                         var invoice_number = orders[0]['invoice_id'][1].split(" ")[1];
                         var invoice_letter = orders[0]['invoice_id'][1].split(" ")[0].substring(3, 4);
