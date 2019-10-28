@@ -59,6 +59,7 @@ odoo.define('l10n_ar_pos_einvoice_ticket', function (require) {
 
     screens.ReceiptScreenWidget.include({
         print_xml: function () {
+            console.log('print_xml');
             var self = this;
             if (this.pos.config.receipt_invoice_number) {
                 self.receipt_data = this.get_receipt_render_env();
