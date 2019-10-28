@@ -73,6 +73,7 @@ odoo.define('l10n_ar_pos_einvoice_ticket', function (require) {
                     domain: [['pos_reference', '=', order['name']]],
                     fields: ['invoice_id'],
                 }).then(function (orders) {
+                    console.log('orders', orders);
                     if (orders.length > 0) {
                         if (orders[0]['invoice_id']) {
                             // el array 1 de Split es el que tiene el nro!
@@ -137,6 +138,7 @@ odoo.define('l10n_ar_pos_einvoice_ticket', function (require) {
         // CON LA FUNCION RENDER_RECEIPT deben traerse los modelos para poder usar
         // en el recibo
         render_receipt: function () {
+            console.log('render_receipt');
             this._super();
             var self = this;
             var order = this.pos.get_order(); // Ok!!
