@@ -11,7 +11,7 @@
             <t t-esc="order.afip_responsability_type_id"/><br />
             Dirección:<t t-esc="order.street"/><br />
         </t>
-        <t t-jquery="t[t-if*='receipt.header']" t-operation="before">
+        <t t-jquery="t[t-if*='receipt.header']" t-operation="after">
             <t t-if="order.invoice_number and widget.pos.config.receipt_invoice_number">
                 <div>------------------------------------------</div>
                 <strong>
