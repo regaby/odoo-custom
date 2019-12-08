@@ -10,11 +10,16 @@
             <t t-if='!receipt.header_xml and receipt.header'>
                 <div><t t-esc='receipt.header' /></div>
             </t>
+            <!-- Company Logo -->
+            <!--<t t-if='receipt.company.logo'>
+                <img t-att-src='receipt.company.logo' />
+                <br/>
+            </t>-->
             <!-- Company Name -->
             <t t-if='receipt.company.name'>
                 <h1><t t-esc='receipt.company.name' /></h1><br/>
             </t>
-            <div font="b">
+            <div class="afip-info" font="b">
                 <div>
                     CUIT: <t t-esc="order.main_id_number"/>
                     <t t-esc="order.afip_responsability_type_id"/>

@@ -5,11 +5,13 @@
         <t t-jquery=".pos-center-align" t-operation="replace">
         </t>
         <t t-jquery=".receipt-phone" t-operation="before">
-            CUIT: <t t-esc="order.main_id_number"/><br />
-            Ing. Brutos: <t t-esc="order.gross_income_number"/><br />
-            Inicio de actividades: <t t-esc="order.start_date"/><br />
-            <t t-esc="order.afip_responsability_type_id"/><br />
-            Dirección:<t t-esc="order.street"/><br />
+            <div class="afip-info">
+                CUIT: <t t-esc="order.main_id_number"/><br />
+                Ing. Brutos: <t t-esc="order.gross_income_number"/><br />
+                Inicio de actividades: <t t-esc="order.start_date"/><br />
+                <t t-esc="order.afip_responsability_type_id"/><br />
+                Dirección:<t t-esc="order.street"/><br />
+            </div>
         </t>
         <t t-jquery="t[t-if*='receipt.header']" t-operation="after">
             <t t-if="order.invoice_number and widget.pos.config.receipt_invoice_number">
