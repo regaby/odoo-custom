@@ -2,8 +2,6 @@
 <templates id="template" xml:space="preserve">
 
     <t t-extend="PosTicket">
-        <t t-jquery=".pos-center-align" t-operation="replace">
-        </t>
         <t t-jquery=".receipt-phone" t-operation="before">
             <div class="afip-info">
                 CUIT: <t t-esc="order.main_id_number"/><br />
@@ -13,7 +11,7 @@
                 Dirección:<t t-esc="order.street"/><br />
             </div>
         </t>
-        <t t-jquery="t[t-if*='receipt.header']" t-operation="after">
+        <t t-jquery=".receipt-user" t-operation="replace">
             <t t-if="order.invoice_number and widget.pos.config.receipt_invoice_number">
                 <div>------------------------------------------</div>
                 <strong>
@@ -134,6 +132,7 @@
                 </tr>
             </table>
         </t>
+
     </t>
 
 </templates>
