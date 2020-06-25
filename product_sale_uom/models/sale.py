@@ -31,7 +31,7 @@ class SaleOrderLine(models.Model):
         result = {'domain': domain}
         return result
 
-    product_uom_original = fields.Many2one('product.uom', 'Unit of Measure Sale', required=False)
+    product_uom_original = fields.Many2one('uom.uom', 'Unit of Measure Sale', required=False)
     product_uom_qty_original = fields.Float(string='Quantity', digits=dp.get_precision('Product Unit of Measure'), required=False, default=1.0)
 
 

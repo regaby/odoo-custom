@@ -7,7 +7,7 @@
     'category': 'Product',
     'website': 'www.galup.com.ar',
     'description': 'Este módulo permite elegir una unidad de venta en el producto',
-    'depends': ['product', 'sale_management', 'stock', 'account_invoicing'],
+    'depends': ['product', 'sale_management', 'stock', 'account'],
     'data': [
         'views/product_template_view.xml',
         'views/sale_view.xml',

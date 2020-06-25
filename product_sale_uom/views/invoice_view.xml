@@ -11,7 +11,7 @@
                                         string="Ordered Qty"
                                         readonly="False"
                                     />
-                    <field name="product_uom_original" options="{'no_open': True, 'no_create': True}" string="Unit of Measure Sale" groups="product.group_uom" readonly="False"/>
+                    <field name="product_uom_original" options="{'no_open': True, 'no_create': True}" string="Unit of Measure Sale" groups="uom.group_uom" readonly="False"/>
                 </xpath>
             </field>
         </record>
