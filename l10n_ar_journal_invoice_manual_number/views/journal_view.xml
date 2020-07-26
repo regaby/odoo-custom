@@ -1,0 +1,15 @@
+<odoo>
+    <data>
+
+       <record model="ir.ui.view" id="view_account_journal_form">
+            <field name="model">account.journal</field>
+            <field name="name">account.journal.form</field>
+            <field name="inherit_id" ref="account_document.view_account_journal_form"/>
+            <field name="arch" type="xml">
+                <field name="use_documents" position="after">
+                    <field name="use_manual_number" attrs="{'invisible': [('type','not in',['sale','sale_refund'])]}"/>
+                </field>
+            </field>
+        </record>
+    </data>
+</odoo>
