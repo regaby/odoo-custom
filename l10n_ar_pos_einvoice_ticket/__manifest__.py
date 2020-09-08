@@ -6,7 +6,7 @@
     'license': 'LGPL-3',
     'category': 'Point Of Sale',
     'website': 'Localizacion arg.',
-    'depends': ['point_of_sale', 'l10n_ar_account'],
+    'depends': ['point_of_sale', 'l10n_ar'],
     'data': [
         'views/pos_einvoice_ar.xml',
         'views/pos_config.xml',
