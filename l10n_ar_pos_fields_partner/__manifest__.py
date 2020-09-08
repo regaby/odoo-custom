@@ -7,7 +7,7 @@
     'category': 'Point Of Sale',
     'website': 'www.galup.com.ar',
     'description': 'Este módulo permite agrega los campos Responsabilidad AFIP, tipo de documento y nro. de documento a la vista cliente del POS.',
-    'depends': ['point_of_sale', 'l10n_ar_account'],
+    'depends': ['point_of_sale', 'l10n_ar'],
     'data': [
         'views/pos_fields_partner.xml',
     ],
