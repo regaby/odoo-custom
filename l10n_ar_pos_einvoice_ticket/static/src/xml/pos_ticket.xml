@@ -57,89 +57,90 @@
         <t t-jquery=".receipt-change" t-operation="after">
             <t t-if="order.afip_auth_code and widget.pos.config.receipt_invoice_number">
                 <div class="afip-cae-info"  style="text-align: center; font-size: 75%;">
-                    <!--<div style="overflow: hidden;">
-                        <img t-attf-src="data:image/*;base64,{{order.afip_barcode_img}}" style="height: 58px;  width: 300px;"/>
-                    </div>-->
-                    <div style='text-align:center'>
-                        <t t-esc="order.afip_barcode"/><br />
+                    <div style="overflow: hidden;">
+                        <img t-attf-src="/report/barcode/?type={{'I2of5'}}&amp;value={{order.afip_barcode}}&amp;humanreadable=1" style="height: 58px;  width: 300px; margin-top: 20px;"/>
                     </div>
                     CAE: <t t-esc="order.afip_auth_code"/><br />
                     Vto. CAE: <t t-esc="order.afip_auth_code_due"/><br />
                 </div>
             </t>
         </t>
-        <!--
         <t t-jquery=".orderlines" t-operation="replace">
-            <table class='orderlines'>
-                <colgroup>
-                    <col width='50%' />
-                    <col width='25%' />
-                    <col width='25%' />
-                </colgroup>
-                <tr t-foreach="orderlines" t-as="orderline">
-                    <td>
-                        <t t-esc="orderline.get_product().display_name"/>
-                         <t t-if="orderline.get_discount() > 0">
-                            <div class="pos-disc-font">
-                                With a <t t-esc="orderline.get_discount()"/>% discount
+            <div class='orderlines'>
+                <t t-foreach='receipt.orderlines' t-as='line'>
+                    <t t-set='simple' t-value='(line.discount === 0 and line.unit_name === "Units" and line.quantity === 1 and !discount_to_show and !(line.display_discount_policy == "without_discount" &amp;&amp; line.price != line.price_lst))' />
+                    <t t-if='simple'>
+                        <div><t t-esc='line.product_name_wrapped[0]' /><span t-esc='widget.format_currency_no_symbol(line.price_display)' class="price_display pos-receipt-right-align"/></div><t t-call="OrderReceiptWrappedProductNameLines"/></t>
+                    <t t-if='!simple'>
+                        <div t-esc='line.product_name_wrapped[0]'/><t t-call="OrderReceiptWrappedProductNameLines"/><t t-if="line.display_discount_policy == 'without_discount' &amp;&amp; line.price != line.price_lst"><div class="pos-receipt-left-padding"><t t-esc="widget.format_currency_no_symbol(line.price_lst)" />-><t t-esc="widget.format_currency_no_symbol(line.price)" /></div>
+                        </t>
+                        <t t-elif='line.discount !== 0'>
+                            <div class="pos-receipt-left-padding">
+                                <t t-if="pos.config.iface_tax_included === 'total'">
+                                    <t t-esc="widget.format_currency_no_symbol(line.price_with_tax_before_discount)"/>
+                                </t>
+                                <t t-else="">
+                                    <t t-esc="widget.format_currency_no_symbol(line.price)"/>
+                                </t>
                             </div>
                         </t>
-                    </td>
-                    <td class="pos-right-align">
-                        <t t-esc="orderline.get_quantity_str_with_unit()"/>
-                    </td>
-                    <td class="pos-right-align">
-                        <t t-if="order.invoice_letter == 'A'">
-                            <t t-esc="widget.format_currency(orderline.get_display_price())"/>
+                        <t t-if='line.discount !== 0'>
+                            <div class="pos-receipt-left-padding">
+                                Discount: <t t-esc='line.discount' />%
+                            </div>
                         </t>
-                        <t t-if="order.invoice_letter !== 'A'">
-                            <t t-esc="widget.format_currency(orderline.get_price_with_tax())"/>
-                        </t>
-                    </td>
-                </tr>
-            </table>
-        </t>
-    -->
-        <!--
-        <t t-jquery=".receipt-total" t-operation="replace">
-            <table class='receipt-total'>
-                <tr>
-                    <td>Subtotal:</td>
-                    <td class="pos-right-align">
-                        <t t-if="order.invoice_letter == 'A'">
-                            <t t-esc="widget.format_currency(order.get_total_without_tax())"/>
-                        </t>
-                        <t t-if="order.invoice_letter !== 'A'">
-                            <t t-esc="widget.format_currency(order.get_total_with_tax())"/>
-                        </t>
-                    </td>
-                </tr>
-                <t t-if="order.invoice_letter == 'A'">
-                    <t t-foreach="order.get_tax_details()" t-as="taxdetail">
-                        <tr>
-                            <td><t t-esc="taxdetail.name" /></td>
-                            <td class="pos-right-align">
-                                <t t-esc="widget.format_currency(taxdetail.amount)" />
-                            </td>
-                        </tr>
+                        <div class="pos-receipt-left-padding">
+                            <t t-esc="Math.round(line.quantity * Math.pow(10, pos.dp['Product Unit of Measure'])) / Math.pow(10, pos.dp['Product Unit of Measure'])"/>
+                            <t t-if='line.unit_name !== "Units"' t-esc='line.unit_name'/>
+                            x
+                            <t t-if="order.invoice_letter == 'A'">
+                                <!-- Precio unitario sin iva -->
+                                <t t-esc='widget.format_currency_no_symbol(line.price_display_one)' />
+                            </t>
+                            <t t-if="order.invoice_letter !== 'A'">
+                                <!-- Como no tengo Precio unitario con iva, hago el subtotal dividido la cant. de productos -->
+                                <t t-esc='widget.format_currency_no_symbol(line.price_with_tax / line.quantity)'/>
+                            </t>
+                            <span class="price_display pos-receipt-right-align">
+                                <t t-if="order.invoice_letter == 'A'">
+                                    <!-- subtotal de producto sin iva -->
+                                    <t t-esc='widget.format_currency_no_symbol(line.price_display)'/>
+                                </t>
+                                <t t-if="order.invoice_letter !== 'A'">
+                                    <!-- subtotal de producto con iva -->
+                                    <t t-esc='widget.format_currency_no_symbol(line.price_with_tax)'/>
+                                </t>
+                            </span>
+                        </div>
                     </t>
                 </t>
-                <tr>
-                    <t t-if="order.get_total_discount() > 0">
-                        <td>Discount:</td>
-                        <td class="pos-right-align">
-                            <t t-esc="widget.format_currency(order.get_total_discount())"/>
-                        </td>
+            </div>
+        </t>
+        <t t-jquery="t[t-if*='!taxincluded']" t-operation="replace">
+            <t t-if='!taxincluded'>
+                <div class="pos-receipt-right-align">--------</div>
+                <br/>
+                <div>Subtotal
+                    <t t-if="order.invoice_letter == 'A'">
+                        <!-- subtotal sin iva -->
+                        <span t-esc='widget.format_currency(receipt.subtotal)' class="pos-receipt-right-align"/>
                     </t>
-                </tr>
-                <tr class="emph">
-                    <td>Total:</td>
-                    <td class="pos-right-align">
-                        <t t-esc="widget.format_currency(order.get_total_with_tax())"/>
-                    </td>
-                </tr>
-            </table>
-        </t>-->
+                    <t t-if="order.invoice_letter !== 'A'">
+                        <!-- subtotal con iva -->
+                        <span t-esc='widget.format_currency(receipt.total_with_tax)' class="pos-receipt-right-align"/>
+                    </t>
+                </div>
+                <t t-if="order.invoice_letter == 'A'">
+                    <!-- impuestos discriminados cuando es factura A -->
+                    <t t-foreach='receipt.tax_details' t-as='tax'>
+                        <div>
+                            <t t-esc='tax.name' />
+                            <span t-esc='widget.format_currency_no_symbol(tax.amount)' class="pos-receipt-right-align"/>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </t>
     </t>
 
 </templates>
