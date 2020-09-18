@@ -141,6 +141,21 @@
                 </t>
             </t>
         </t>
-    </t>
-
+        <!-- Cuando el precio incluye iva -->
+        <t t-jquery="t[t-if*='taxincluded']" t-operation="replace">
+            <t t-if='taxincluded'>
+                <t t-if="order.invoice_letter == 'A'">
+                    <t t-foreach='receipt.tax_details' t-as='tax'>
+                        <div>
+                            <t t-esc='tax.name' />
+                            <span t-esc='widget.format_currency_no_symbol(tax.amount)' class="pos-receipt-right-align"/>
+                        </div>
+                    </t>
+                    <div>
+                        Total Taxes
+                        <span t-esc='widget.format_currency(receipt.total_tax)' class="pos-receipt-right-align"/>
+                    </div>
+                </t>
+            </t>
+        </t>
 </templates>
