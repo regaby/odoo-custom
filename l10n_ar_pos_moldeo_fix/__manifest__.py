@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    'name': 'POS einvoice ticket fix',
+    'name': 'POS Moldeo ticket fix',
     'version': '0.1',
     'author': 'Ing. Gabriela Rivero',
     'license': 'LGPL-3',
