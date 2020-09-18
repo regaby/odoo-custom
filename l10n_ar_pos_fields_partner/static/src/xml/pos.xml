@@ -28,6 +28,7 @@
                         <th>Address</th>
                         <th>Responsabilidad AFIP</th>
                         <th>Tipo Documento</th>
+                        <th>Número de documento</th>
                     </tr>
                 </thead>
                 <tbody class='client-list-contents'>
@@ -41,6 +42,7 @@
             <td><t t-esc='partner.address' /></td>
             <td><t t-esc='partner.l10n_ar_afip_responsibility_type_id[1] or ""' /></td>
             <td><t t-esc='partner.l10n_latam_identification_type_id[1] or ""' /></td>
+            <td><t t-if="partner.vat"><t t-esc='partner.vat' /></t></td>
         </t>
     </t>
 
