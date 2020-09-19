@@ -4,18 +4,22 @@
         <t t-jquery='.client-details-right' t-operation='append'>
 
             <div class='client-detail'>
-            <div>
-                <span class='label'>Responsabilidad AFIP</span>
+                <span class='label'>Resp. AFIP</span>
                 <t t-if='partner.l10n_ar_afip_responsibility_type_id'>
-                    <span class='detail client-id'><t t-esc='partner.l10n_ar_afip_responsibility_type_id[1]'/></span>
+                    <span class='detail l10n_ar_afip_responsibility_type_id'><t t-esc='partner.l10n_ar_afip_responsibility_type_id[1]'/></span>
+                </t>
+                <t t-if='!partner.l10n_ar_afip_responsibility_type_id'>
+                    <span class='detail l10n_ar_afip_responsibility_type_id empty'>N/A</span>
                 </t>
             </div>
-            <div>
-                <span class='label'>Tipo Documento</span>
+            <div class='client-detail'>
+                <span class='label'>Tipo Doc.</span>
                 <t t-if='partner.l10n_latam_identification_type_id'>
                     <span class='detail client-id'><t t-esc='partner.l10n_latam_identification_type_id[1]'/></span>
                 </t>
-            </div>
+                <t t-if='!partner.l10n_latam_identification_type_id'>
+                    <span class='detail l10n_latam_identification_type_id empty'>N/A</span>
+                </t>
             </div>
         </t>
     </t>
@@ -51,7 +55,7 @@
             <div class='client-detail'>
                         <span class='label'>Resp. AFIP</span>
                         <select class='detail client-address-country needsclick' name='l10n_ar_afip_responsibility_type_id'>
-                            <option value=''>None</option>
+                            <!--<option value=''>None</option>-->
                             <t t-foreach='widget.pos.responsability_type' t-as='responsability'>
                                 <option t-att-value='responsability.id' t-att-selected="partner.l10n_ar_afip_responsibility_type_id ? ((responsability.id === partner.l10n_ar_afip_responsibility_type_id[0]) ? true : undefined) : undefined">
                                     <t t-esc='responsability.name'/>
