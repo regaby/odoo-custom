@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record model='l10n_ar.afip.responsibility.type' id='l10n_ar.res_CF'>
+        <field name='sequence'>0</field>
+    </record>
+</odoo>
