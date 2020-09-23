@@ -1,0 +1,25 @@
+<odoo>
+    <data>
+<!-- Esta es la vista en donde se habilitan las opciones de auto_invoice"
+        Dentro del apartado de Configuración del Punto de Venta -->
+
+       <record model="ir.ui.view" id="pos_config_einvoice">
+            <field name="name">pos.config</field>
+            <field name="model">pos.config</field>
+            <field name="inherit_id" ref="point_of_sale.pos_config_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@id='company']" position="after">
+                    <div class="col-12 col-lg-6 o_setting_box">
+                        <div class="o_setting_right_pane">
+                            <div class="row">
+                                <label string="Imprimir Factura PDF" for="print_pdf_invoice" class="col-lg-4 o_light_label"/>
+                                <field name="print_pdf_invoice"/>
+                            </div>
+                        </div>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>
