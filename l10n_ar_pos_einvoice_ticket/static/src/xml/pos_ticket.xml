@@ -54,10 +54,10 @@
                 </div>
             </t>
         </t>
-        <t t-jquery=".receipt-change" t-operation="after">
+        <t t-jquery=".before-footer" t-operation="after">
             <t t-if="order.afip_auth_code and widget.pos.config.receipt_invoice_number">
                 <div class="afip-cae-info"  style="text-align: center; font-size: 75%;">
-                    <div style="overflow: hidden;">
+                    <div style="overflow: hidden; margin-bottom: 10px;">
                         <img t-attf-src="/report/barcode/?type={{'I2of5'}}&amp;value={{order.afip_barcode}}&amp;humanreadable=1" style="height: 58px;  width: 300px; margin-top: 20px;"/>
                     </div>
                     CAE: <t t-esc="order.afip_auth_code"/><br />
