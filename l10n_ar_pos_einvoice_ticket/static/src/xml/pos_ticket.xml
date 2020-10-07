@@ -2,9 +2,9 @@
 <templates id="template" xml:space="preserve">
 
     <t t-extend="OrderReceipt">
-        <!--<t t-jquery=".pos-center-align" t-operation="replace">
+        <t t-jquery="t[t-if*='receipt.company.phone']" t-operation="before">
+            <div><t t-esc="order.company_registry"/></div>
         </t>
-        <t t-jquery=".pos-receipt-contact" t-operation="after">-->
         <t t-jquery="t[t-if*='receipt.company.vat']" t-operation="replace">
             <div class="afip-info">
                 <div>CUIT: <t t-esc="order.vat"/></div>

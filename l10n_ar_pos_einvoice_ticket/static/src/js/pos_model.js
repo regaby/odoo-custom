@@ -89,7 +89,7 @@ odoo.define('l10n_ar_pos_einvoice_ticket', function (require) {
                                      args: [[['id', '=', partner_id]], ['vat',
                                                                         'l10n_ar_gross_income_number',
                                                                         'l10n_ar_afip_responsibility_type_id',
-                                                                        'street', 'city', 'state_id', 'country_id']],
+                                                                        'street', 'city', 'state_id', 'country_id', 'company_registry']],
                                     }
 
                                  ).then(function (company_partner) {
@@ -101,6 +101,7 @@ odoo.define('l10n_ar_pos_einvoice_ticket', function (require) {
                                                                      company_partner[0]['city'] + ', ' +
                                                                      company_partner[0]['state_id'][1] + ', ' +
                                                                      company_partner[0]['country_id'][1];
+                                    self.receipt_data['order']['company_registry'] = company_partner[0]['company_registry'];
                                     //---------
                                     rpc.query({
                                          model: 'account.move',
@@ -161,9 +162,10 @@ odoo.define('l10n_ar_pos_einvoice_ticket', function (require) {
                         rpc.query({
                              model: 'res.company',
                              method: 'search_read',
-                             args: [[['id', '=', company_id]], ['l10n_ar_afip_start_date']],
+                             args: [[['id', '=', company_id]], ['l10n_ar_afip_start_date', 'company_registry']],
                             }).then(function (company_dict) {
                              self.pos.get_order()['l10n_ar_afip_start_date'] = company_dict[0]['l10n_ar_afip_start_date'];
+                             self.pos.get_order()['company_registry'] = company_dict[0]['company_registry'];
                              rpc.query({
                                  model: 'res.partner',
                                  method: 'search_read',
