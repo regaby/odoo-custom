@@ -22,14 +22,12 @@ odoo.define('l10n_ar_pos_einvoice_ticket', function (require) {
             }
         }
     });
-    // Este metodo es el mas importante para habilitar los campos que se necesitan usar
-    // por ejemplo "vat" fue sustituido por main_id_number
 
+// Este metodo es el mas importante para habilitar los campos que se necesitan usar
+// por ejemplo "vat" fue sustituido por main_id_number
 
 // esto quiere decir que agregamos funcionalidad (EXTEND)
 // a traves de la var models
-
-
 
     var _super_PosModel = models.PosModel.prototype;
     models.PosModel = models.PosModel.extend({
@@ -54,8 +52,6 @@ odoo.define('l10n_ar_pos_einvoice_ticket', function (require) {
         },
 
     });
-
-
 
     screens.ReceiptScreenWidget.include({
         print_xml: function () {
@@ -110,7 +106,8 @@ odoo.define('l10n_ar_pos_einvoice_ticket', function (require) {
                                      args: [[['id', '=', invoice_id]], ['afip_auth_code',
                                                                         'afip_cae_due',
                                                                         'afip_barcode',
-                                                                        'afip_barcode_img']],
+                                                                        'afip_barcode_img',
+                                                                        'document_type_id']],
                                     }
 
                                  ).then(function (invoices) {
@@ -118,6 +115,7 @@ odoo.define('l10n_ar_pos_einvoice_ticket', function (require) {
                                     self.receipt_data['order']['afip_auth_code'] = invoices[0]['afip_auth_code'];
                                     self.receipt_data['order']['afip_cae_due'] = invoices[0]['afip_cae_due'];
                                     self.receipt_data['order']['afip_barcode_img'] = invoices[0]['afip_barcode_img'];
+                                    self.receipt_data['order']['document_type_id'] = invoices[0]['document_type_id'][1].split(" ")[0];
 
                                     console.log('self.receipt_data', self.receipt_data);
                                     var receipt = qweb.render('XmlReceipt', self.receipt_data);
@@ -193,7 +191,8 @@ odoo.define('l10n_ar_pos_einvoice_ticket', function (require) {
                                  args: [[['id', '=', invoice_id]], ['afip_auth_code',
                                                                     'afip_cae_due',
                                                                     'afip_barcode',
-                                                                    'afip_barcode_img']],
+                                                                    'afip_barcode_img',
+                                                                    'document_type_id']],
                                 }
 
                              ).then(function (invoices) {
@@ -201,6 +200,7 @@ odoo.define('l10n_ar_pos_einvoice_ticket', function (require) {
                                 self.pos.get_order()['afip_auth_code'] = invoices[0]['afip_auth_code'];
                                 self.pos.get_order()['afip_cae_due'] = invoices[0]['afip_cae_due'];
                                 self.pos.get_order()['afip_barcode_img'] = invoices[0]['afip_barcode_img'];
+                                self.pos.get_order()['document_type_id'] = invoices[0]['document_type_id'][1].split(" ")[0];
 
                                 self.$('.pos-receipt-container').html(qweb.render('PosTicket', self.get_receipt_render_env()));
 
