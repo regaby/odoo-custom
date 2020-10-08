@@ -49,7 +49,6 @@ odoo.define('l10n_ar_pos_fields_partner.PosModel', function (require) {
 
     screens.ClientListScreenWidget.include({
         save_client_details: function (partner) {
-            this._super(partner);
             var self = this;
             var fields = {};
             this.$('.client-details-contents .detail').each(function(idx,el){
@@ -75,6 +74,7 @@ odoo.define('l10n_ar_pos_fields_partner.PosModel', function (require) {
                 this.gui.show_popup('error',_t('Seleccione Tipo Doc. CUIT'));
                 return;
             }
+            this._super(partner);
         },
 
     });
