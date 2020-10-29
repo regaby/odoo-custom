@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="assets_backend" name="pos_scan_default_code" inherit_id="point_of_sale.assets">
+        <xpath expr="." position="inside">
+            <script type="text/javascript" src="/pos_scan_default_code/static/src/js/pos_scan.js"></script>
+        </xpath>
+    </template>
+</odoo>
+
