@@ -14,15 +14,16 @@
                 <div>Dirección: <t t-esc="order.street"/></div>
             </div>
         </t>
-        <t t-jquery="t[t-if*='receipt.cashier']" t-operation="before">
+        <t t-jquery="t[t-if*='receipt.cashier']" t-operation="replace">
             <t t-if="order.invoice_number and widget.pos.config.receipt_invoice_number">
                 <div class="afip-invoice-info" >
-                    <div>--------------------------------</div>
+                    <hr />
                     <strong>
-                    FACTURA <t t-esc="order.invoice_letter"/><br />
+                    FACTURA <t t-esc="order.invoice_letter"/> - ORIGINAL - COD <t t-esc="order.l10n_latam_document_type_id"/><br />
                     N° DE FACTURA: <t t-esc="order.invoice_number"/><br />
                     FECHA: <t t-esc="order.formatted_validation_date"/></strong>
                     <br />
+                    <hr />
                 </div>
             </t>
             <t t-set="client" t-value="order.get_client()"/>
@@ -53,6 +54,22 @@
                     -->
                 </div>
             </t>
+            <t t-if='receipt.cashier'>
+                <div class='cashier'>
+                    <hr />
+                    <div>Servido por <t t-esc='receipt.cashier' /></div>
+                </div>
+            </t>
+            <hr />
+                <strong>
+                <div>DESCRIPCIÓN</div>
+                <div>CANT. x PRECIO UNIT.
+                	&#160;&#160;&#160;&#160;&#160;&#160;&#160;
+                	&#160;&#160;&#160;&#160;&#160;&#160;&#160;
+                	&#160;&#160;&#160;&#160;&#160;&#160;&#160;
+                	IMPORTE</div>
+                </strong>
+            <hr />
         </t>
         <t t-jquery=".before-footer" t-operation="after">
             <t t-if="order.afip_auth_code and widget.pos.config.receipt_invoice_number">
