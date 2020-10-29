@@ -65,11 +65,12 @@ odoo.define('l10n_ar_pos_fields_partner.PosModel', function (require) {
                     fields[el.name] = el.value || false;
                 }
             });
-            // si es responsable inscripto y tipo doc cuit, vat is required
+            // si es responsable inscripto, vat is required
             if (!fields.vat && fields.l10n_ar_afip_responsibility_type_id == '1' ) {
                 this.gui.show_popup('error',_t('El campo CUIT (NIF) es requerido.'));
                 return;
             }
+            // si es responsable inscripto, el tipo de documento debe ser cuit
             if (fields.l10n_latam_identification_type_id != '4' && fields.l10n_ar_afip_responsibility_type_id == '1' ) {
                 this.gui.show_popup('error',_t('Seleccione Tipo Doc. CUIT'));
                 return;
