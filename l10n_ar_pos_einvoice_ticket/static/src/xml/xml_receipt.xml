@@ -202,10 +202,10 @@
             <t t-if="order.l10n_ar_afip_auth_code and widget.pos.config.receipt_invoice_number">
                 <br />
                 <div style="overflow: hidden;">
-                    <img t-attf-src="data:image/*;base64,{{order.afip_barcode_img}}"/>
+                    <img t-attf-src="data:image/*;base64,{{order.l10n_ar_afip_barcode_img}}"/>
                 </div>
                 <div style='text-align:center' font="b">
-                    <t t-esc="order.afip_barcode"/><br />
+                    <t t-esc="order.l10n_ar_afip_barcode"/><br />
                 </div>
                 <div font="b">
                 CAE: <t t-esc="order.l10n_ar_afip_auth_code"/> Vto. CAE: <t t-esc="order.l10n_ar_afip_auth_code_due"/><br />
