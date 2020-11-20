@@ -136,7 +136,7 @@
                             x
                             <t t-if="order.invoice_letter == 'A'">
                                 <!-- Precio unitario sin iva -->
-                                <t t-esc='widget.format_currency_no_symbol(line.price_display_one)' />
+                                <t t-esc='widget.format_currency_no_symbol(line.price_without_tax / line.quantity)' />
                             </t>
                             <t t-if="order.invoice_letter !== 'A'">
                                 <!-- Como no tengo Precio unitario con iva, hago el subtotal dividido la cant. de productos -->
@@ -145,7 +145,7 @@
                             <span class="price_display pos-receipt-right-align">
                                 <t t-if="order.invoice_letter == 'A'">
                                     <!-- subtotal de producto sin iva -->
-                                    <t t-esc='widget.format_currency_no_symbol(line.price_display)'/>
+                                    <t t-esc='widget.format_currency_no_symbol(line.price_without_tax)'/>
                                 </t>
                                 <t t-if="order.invoice_letter !== 'A'">
                                     <!-- subtotal de producto con iva -->
