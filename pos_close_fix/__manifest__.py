@@ -9,7 +9,7 @@
     'summary': 'Close pos fix',
     "description": """Este modulo salta el control de journal item unbalanced al cerrar sesion del pos:
     Cannot create unbalanced journal entry. Ids:
-    Differences debit - credit:"""
+    Differences debit - credit:""",
     'depends': ['point_of_sale'],
     'data': [
     ],
