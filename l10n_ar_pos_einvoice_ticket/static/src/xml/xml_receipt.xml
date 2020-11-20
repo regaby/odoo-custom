@@ -19,6 +19,11 @@
             <t t-if='receipt.company.name'>
                 <h1><t t-esc='receipt.company.name' /></h1><br/>
             </t>
+            <t t-if='receipt.company.company_registry'>
+                <div>
+                    <t t-esc='receipt.company.company_registry' />
+                </div>
+            </t>
             <div class="afip-info" font="b">
                 <div>
                     CUIT: <t t-esc="order.vat"/>
@@ -43,25 +48,43 @@
             </div>
 
             <t t-if="order.invoice_number and widget.pos.config.receipt_invoice_number">
-                <div>-----------------------------------------------</div>
+                <hr />
                 <div>
-                FACTURA <t t-esc="order.invoice_letter"/> N° <t t-esc="order.invoice_number"/><br />
+                FACTURA <t t-esc="order.invoice_letter"/> - ORIGINAL
+                    <t t-if="order.invoice_letter == 'A'">
+                        - COD <t t-esc="order.l10n_latam_document_type_id"/>
+                    </t>
+                    <br />
+                N° DE FACTURA: <t t-esc="order.invoice_number"/><br />
                 FECHA: <t t-esc="receipt.date.localestring"/>
                 </div>
-                <div>-----------------------------------------------</div>
+                <hr />
             </t>
 
             <t t-set="client" t-value="order.get_client()"/>
             <t t-if="client">
                 CLIENTE: <t t-esc="client['name']"/>
+                <t t-if="client['l10n_latam_identification_type_id']">
+                    <t t-esc="client['l10n_latam_identification_type_id'][1]"/>:
+                </t>
                 <t t-if="client['vat']">
-                    CUIT: <t t-esc="client['vat']"/><br />
+                    <t t-esc="client['vat']"/><br />
                 </t>
                 <t t-if="client['l10n_ar_afip_responsibility_type_id']">
                     <t t-esc="client['l10n_ar_afip_responsibility_type_id'][1]"/><br />
                 </t>
                 <t t-if="client['street']">
-                    DIRECCION: <t t-esc="client['street']"/><br />
+                    DIRECCION: <t t-esc="client['street']"/>
+                    <t t-if="client['city']">
+                        , <t t-esc="client['city']"/>
+                    </t>
+                    <t t-if="client['state_id']">
+                        , <t t-esc="client['state_id'][1]"/>
+                    </t>
+                    <t t-if="client['country_id']">
+                        , <t t-esc="client['country_id'][1]"/>
+                    </t>
+                    <br />
                 </t>
                 <t t-if="client['email']">
                     Email: <t t-esc="client['email']"/><br />
@@ -72,7 +95,7 @@
                 <t t-if="client['website']">
                     Website: <t t-esc="client['website']"/><br />
                 </t>
-                <div>-----------------------------------------------</div>
+                <hr />
                 <br/>
             </t>
 
@@ -228,7 +251,7 @@
 
             <t t-if='receipt.cashier'>
                 <div class='cashier'>
-                    <div>-----------------------------------------------</div>
+                    <hr />
                     <div>Served by <t t-esc='receipt.cashier' /></div>
                 </div>
             </t>
