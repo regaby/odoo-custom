@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="pos_config_view_form_inherit_ip" model="ir.ui.view">
+            <field name="name">pos.config.view.form.inherit.ip</field>
+            <field name="model">pos.config</field>
+            <field name="inherit_id" ref="point_of_sale.pos_config_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@id='category_reference']" position="after">
+                    <div class="col-12 col-lg-6 o_setting_box" title="Default Cusotmer in POS Order.">
+                        <div class="o_setting_right_pane">
+                            <label for="default_partner_id"/>
+                            <div class="text-muted">
+                                Default Customer.
+                            </div>
+                            <div class="content-group mt16">
+                                <field name="default_partner_id" colspan="4" nolabel="1"/>
+                            </div>
+                        </div>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
