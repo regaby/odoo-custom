@@ -3,7 +3,11 @@
 
     <t t-extend="OrderReceipt">
         <t t-jquery="t[t-if*='receipt.company.phone']" t-operation="before">
-            <div><t t-esc="order.company_registry"/></div>
+            <div style="margin-top:3px;">
+                <t t-if="order.company_registry">
+                    <t t-esc="order.company_registry"/>
+                </t>
+            </div>
         </t>
         <t t-jquery="t[t-if*='receipt.company.vat']" t-operation="replace">
             <div class="afip-info">
@@ -115,7 +119,7 @@
                             x
                             <t t-if="order.invoice_letter == 'A'">
                                 <!-- Precio unitario sin iva -->
-                                <t t-esc='widget.format_currency_no_symbol(line.price_display_one)' />
+                                <t t-esc='widget.format_currency_no_symbol(line.price_without_tax / line.quantity)' />
                             </t>
                             <t t-if="order.invoice_letter !== 'A'">
                                 <!-- Como no tengo Precio unitario con iva, hago el subtotal dividido la cant. de productos -->
@@ -124,7 +128,7 @@
                             <span class="price_display pos-receipt-right-align">
                                 <t t-if="order.invoice_letter == 'A'">
                                     <!-- subtotal de producto sin iva -->
-                                    <t t-esc='widget.format_currency_no_symbol(line.price_display)'/>
+                                    <t t-esc='widget.format_currency_no_symbol(line.price_without_tax)'/>
                                 </t>
                                 <t t-if="order.invoice_letter !== 'A'">
                                     <!-- subtotal de producto con iva -->
@@ -134,49 +138,29 @@
                         </div>
                     </t>
                 </t>
+                <t t-set='imp_inclu' t-value='Math.abs(receipt.subtotal - receipt.total_with_tax) &lt;= 0.000001' />
+                <t t-if="!imp_inclu &amp;&amp; order.invoice_letter == 'A'">
+                        <div class="pos-receipt-right-align">--------</div>
+                    <br/>
+                    <div>Subtotal<span t-esc='widget.format_currency(receipt.subtotal)' class="pos-receipt-right-align"/></div>
+                    <t t-foreach='receipt.tax_details' t-as='tax'>
+                        <div>
+                            <t t-esc='tax.name' />
+                            <span t-esc='widget.format_currency_no_symbol(tax.amount)' class="pos-receipt-right-align"/>
+                        </div>
+                    </t>
+                </t>
+                <t t-if="imp_inclu &amp;&amp; order.invoice_letter == 'A'">
+                    <t t-foreach='receipt.tax_details' t-as='tax'>
+                        <div>
+                            <t t-esc='tax.name' />
+                            <span t-esc='widget.format_currency_no_symbol(tax.amount)' class="pos-receipt-right-align"/>
+                        </div>
+                    </t>
+                </t>
             </div>
         </t>
-        <t t-jquery="t[t-if*='!taxincluded']" t-operation="replace">
-            <t t-if='!taxincluded'>
-                <div class="pos-receipt-right-align">--------</div>
-                <br/>
-                <div>Subtotal
-                    <t t-if="order.invoice_letter == 'A'">
-                        <!-- subtotal sin iva -->
-                        <span t-esc='widget.format_currency(receipt.subtotal)' class="pos-receipt-right-align"/>
-                    </t>
-                    <t t-if="order.invoice_letter !== 'A'">
-                        <!-- subtotal con iva -->
-                        <span t-esc='widget.format_currency(receipt.total_with_tax)' class="pos-receipt-right-align"/>
-                    </t>
-                </div>
-                <t t-if="order.invoice_letter == 'A'">
-                    <!-- impuestos discriminados cuando es factura A -->
-                    <t t-foreach='receipt.tax_details' t-as='tax'>
-                        <div>
-                            <t t-esc='tax.name' />
-                            <span t-esc='widget.format_currency_no_symbol(tax.amount)' class="pos-receipt-right-align"/>
-                        </div>
-                    </t>
-                </t>
-            </t>
-        </t>
-        <!-- Cuando el precio incluye iva -->
         <t t-jquery="t[t-if*='taxincluded']" t-operation="replace">
-            <t t-if='taxincluded'>
-                <t t-if="order.invoice_letter == 'A'">
-                    <t t-foreach='receipt.tax_details' t-as='tax'>
-                        <div>
-                            <t t-esc='tax.name' />
-                            <span t-esc='widget.format_currency_no_symbol(tax.amount)' class="pos-receipt-right-align"/>
-                        </div>
-                    </t>
-                    <div>
-                        Total Taxes
-                        <span t-esc='widget.format_currency(receipt.total_tax)' class="pos-receipt-right-align"/>
-                    </div>
-                </t>
-            </t>
         </t>
     </t>
 </templates>
