@@ -23,7 +23,11 @@
                 <div class="afip-invoice-info" >
                     <hr />
                     <strong>
-                    FACTURA <t t-esc="order.invoice_letter"/> - ORIGINAL - COD <t t-esc="order.l10n_latam_document_type_id"/><br />
+                    FACTURA <t t-esc="order.invoice_letter"/> - ORIGINAL
+                        <t t-if="order.invoice_letter == 'A'">
+                            - COD <t t-esc="order.l10n_latam_document_type_id"/>
+                        </t>
+                        <br />
                     N° DE FACTURA: <t t-esc="order.invoice_number"/><br />
                     FECHA: <t t-esc="order.formatted_validation_date"/></strong>
                     <br />
@@ -35,14 +39,27 @@
                 <div class="afip-client-info" >
                     <t t-set="client" t-value="order.get_client()"/>
                     CLIENTE: <t t-esc="client['name']"/><br />
+                    <t t-if="client['l10n_latam_identification_type_id']">
+                    <t t-esc="client['l10n_latam_identification_type_id'][1]"/>:
+                    </t>
                     <t t-if="client['vat']">
-                    CUIT: <t t-esc="client['vat']"/><br />
+                    <t t-esc="client['vat']"/><br />
                     </t>
                     <t t-if="client['l10n_ar_afip_responsibility_type_id']">
                     <t t-esc="client['l10n_ar_afip_responsibility_type_id'][1]"/><br />
                     </t>
                     <t t-if="client['street']">
-                    CALLE: <t t-esc="client['street']"/><br />
+                        CALLE: <t t-esc="client['street']"/>
+                        <t t-if="client['city']">
+                            , <t t-esc="client['city']"/>
+                        </t>
+                        <t t-if="client['state_id']">
+                            , <t t-esc="client['state_id'][1]"/>
+                        </t>
+                        <t t-if="client['country_id']">
+                            , <t t-esc="client['country_id'][1]"/>
+                        </t>
+                        <br />
                     </t>
                     <t t-if="client['email']">
                         Email: <t t-esc="client['email']"/><br />
@@ -151,6 +168,9 @@
                     </t>
                 </t>
                 <t t-if="imp_inclu &amp;&amp; order.invoice_letter == 'A'">
+                        <div class="pos-receipt-right-align">--------</div>
+                    <br/>
+                    <div>Subtotal<span t-esc='widget.format_currency(receipt.total_without_tax)' class="pos-receipt-right-align"/></div>
                     <t t-foreach='receipt.tax_details' t-as='tax'>
                         <div>
                             <t t-esc='tax.name' />
