@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+    	<template id="assets_pos_tax_free_order" name="pos_tax_free_order assets" inherit_id="point_of_sale.assets">
+    		<xpath expr="//link[@id='pos-stylesheet']" position="after">
+              <link rel="stylesheet" href="/pos_tax_free_order/static/src/css/pos.css" id="pos-stylesheet-custom"/>
+          </xpath>
+          <xpath expr="." position="inside">
+            	<script type="text/javascript" src="/pos_tax_free_order/static/src/js/models.js"></script>
+            	<script type="text/javascript" src="/pos_tax_free_order/static/src/js/chrome.js"></script>
+            </xpath>
+    	</template>
+    	<!-- <template id="assets_pos_tax_free_order" name="pos_tax_free_order assets" inherit_id="web.assets_backend">
+            <xpath expr="." position="inside">
+            	<script type="text/javascript" src="/pos_tax_free_order/static/src/js/models.js"></script>
+            </xpath> 
+        </template> -->
+    </data>
+</odoo>

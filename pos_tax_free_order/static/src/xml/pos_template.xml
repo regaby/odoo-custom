@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<templates id="template" xml:space="preserve">
+	<t t-name="ActionTaxFreeApplyTaxWidget">
+        <div class="actionpad-tax-widget" >
+            <button class='button order-tax-free' >
+                <i class="fa fa-pencil-square-o"></i> 
+            	Tax Free
+            </button>
+            <button class='button order-apply-tax'>
+                <i class="fa fa-pencil-square-o"></i>
+                Apply Tax
+            </button>
+        </div>
+    </t>
+    <t t-extend='ProductScreenWidget'>
+        <t t-jquery='.placeholder-ActionpadWidget' t-operation='before'>
+        	<div class="placeholder-ActionTaxFreeApplyTaxWidget"></div>
+        </t>
+    </t>
+</templates>
