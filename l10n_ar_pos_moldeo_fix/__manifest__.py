@@ -9,6 +9,7 @@
     'depends': ['l10n_ar_pos_einvoice_ticket'],
     'summary': "Módulo de parche para impresión de ticket de FE con la localización de moldeo v13.0",
     'data': [
+        'views/pos_view.xml',
     ],
     'qweb': [
     ],

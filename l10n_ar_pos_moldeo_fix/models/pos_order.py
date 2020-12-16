@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 from odoo import api, fields, models, _
 
+class PosConfig(models.Model):
+    _inherit = 'pos.config'
+
+    manual_journal_id = fields.Many2one('account.journal',string='Diario Manual',domain=[('type','=','sale')])
+
 class pos_order(models.Model):
     _inherit = "pos.order"
 
@@ -15,8 +20,18 @@ class pos_order(models.Model):
 
             if not order.partner_id:
                 raise UserError(_('Please provide a partner for the sale.'))
-
             move_vals = order._prepare_invoice_vals()
+            ## chequeo conexion de afip
+            journal_ws = self.session_id.config_id.invoice_journal_id
+            if journal_ws.l10n_ar_afip_pos_system == 'RLI_RLM':
+                afip_ws = journal_ws.afip_ws
+                if not afip_ws:
+                    raise UserError(_('No AFIP WS selected'))
+                ws = journal_ws.company_id.get_connection(afip_ws).connect()
+                ws.Dummy()
+                if ws.AppServerStatus != 'OK' or ws.DbServerStatus != 'OK' or ws.AuthServerStatus != 'OK' and self.session_id.config_id.manual_journal_id:
+                        move_vals['journal_id'] = self.session_id.config_id.manual_journal_id.id
+            ####
             new_move = moves.sudo()\
                             .with_context(default_type=move_vals['type'], force_company=order.company_id.id)\
                             .create(move_vals)
