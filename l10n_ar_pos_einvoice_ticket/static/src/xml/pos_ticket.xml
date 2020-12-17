@@ -9,6 +9,13 @@
                 </t>
             </div>
         </t>
+        <t t-jquery="t[t-if*='receipt.company.contact_address']" t-operation="replace">
+            <t t-if="receipt.company.contact_address">
+                <h2>
+                    <t t-esc="receipt.company.contact_address"/>
+                </h2>
+            </t>
+        </t>
         <t t-jquery="t[t-if*='receipt.company.vat']" t-operation="replace">
             <div class="afip-info">
                 <div>CUIT: <t t-esc="order.vat"/></div>
