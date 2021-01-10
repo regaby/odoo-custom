@@ -18,11 +18,13 @@
         </t>
         <t t-jquery="t[t-if*='receipt.company.vat']" t-operation="replace">
             <div class="afip-info">
-                <div>CUIT: <t t-esc="order.vat"/></div>
-                <div>Ing. Brutos: <t t-esc="order.l10n_ar_gross_income_number"/></div>
-                <div>Inicio de actividades: <t t-esc="order.l10n_ar_afip_start_date"/></div>
-                <div><t t-esc="order.l10n_ar_afip_responsibility_type_id"/></div>
-                <div>Dirección: <t t-esc="order.street"/></div>
+                <t t-if="order.invoice_number">
+                    <div>CUIT: <t t-esc="order.vat"/></div>
+                    <div>Ing. Brutos: <t t-esc="order.l10n_ar_gross_income_number"/></div>
+                    <div>Inicio de actividades: <t t-esc="order.l10n_ar_afip_start_date"/></div>
+                    <div><t t-esc="order.l10n_ar_afip_responsibility_type_id"/></div>
+                    <div>Dirección: <t t-esc="order.street"/></div>
+                </t>
             </div>
         </t>
         <t t-jquery="t[t-if*='receipt.cashier']" t-operation="replace">
