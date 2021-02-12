@@ -75,35 +75,35 @@ class ResPartner(models.Model):
             # 'name': padron.tipo_persona,
             # 'name': padron.tipo_doc,
             # 'name': padron.dni,
-            'estado_padron': padron.estado,
+            # 'estado_padron': padron.estado,
             'street': padron.direccion,
             'city': padron.localidad,
             'zip': padron.cod_postal,
-            'actividades_padron': self.actividades_padron.search(
-                [('code', 'in', padron.actividades)]).ids,
-            'impuestos_padron': self.impuestos_padron.search(
-                [('code', 'in', padron.impuestos)]).ids,
-            'imp_iva_padron': imp_iva,
+            # 'actividades_padron': self.actividades_padron.search(
+            #     [('code', 'in', padron.actividades)]).ids,
+            # 'impuestos_padron': self.impuestos_padron.search(
+            #     [('code', 'in', padron.impuestos)]).ids,
+            # 'imp_iva_padron': imp_iva,
             # TODAVIA no esta funcionando
             # 'imp_ganancias_padron': padron.imp_ganancias,
-            'monotributo_padron': padron.monotributo,
-            'actividad_monotributo_padron': padron.actividad_monotributo,
-            'empleador_padron': padron.empleador == 'S' and True,
-            'integrante_soc_padron': padron.integrante_soc,
-            'last_update_padron': fields.Date.today(),
+            # 'monotributo_padron': padron.monotributo,
+            # 'actividad_monotributo_padron': padron.actividad_monotributo,
+            # 'empleador_padron': padron.empleador == 'S' and True,
+            # 'integrante_soc_padron': padron.integrante_soc,
+            # 'last_update_padron': fields.Date.today(),
         }
         ganancias_inscripto = [10, 11]
         ganancias_exento = [12]
-        if set(ganancias_inscripto) & set(padron.impuestos):
-            vals['imp_ganancias_padron'] = 'AC'
-        elif set(ganancias_exento) & set(padron.impuestos):
-            vals['imp_ganancias_padron'] = 'EX'
-        elif padron.monotributo == 'S':
-            vals['imp_ganancias_padron'] = 'NC'
-        else:
-            _logger.info(
-                "We couldn't get impuesto a las ganancias from padron, you"
-                "must set it manually")
+        # if set(ganancias_inscripto) & set(padron.impuestos):
+        #     vals['imp_ganancias_padron'] = 'AC'
+        # elif set(ganancias_exento) & set(padron.impuestos):
+        #     vals['imp_ganancias_padron'] = 'EX'
+        # elif padron.monotributo == 'S':
+        #     vals['imp_ganancias_padron'] = 'NC'
+        # else:
+        #     _logger.info(
+        #         "We couldn't get impuesto a las ganancias from padron, you"
+        #         "must set it manually")
 
         if padron.provincia:
             # depending on the database, caba can have one of this codes
@@ -123,14 +123,14 @@ class ResPartner(models.Model):
                 vals['state_id'] = state.id
 
         if imp_iva == 'NI' and padron.monotributo == 'S':
-            vals['afip_responsability_type_id'] = self.env.ref(
-                'l10n_ar_account.res_RM').id
+            vals['l10n_ar_afip_responsibility_type_id'] = self.env.ref(
+                'l10n_ar.res_RM').id
         elif imp_iva == 'AC':
-            vals['afip_responsability_type_id'] = self.env.ref(
-                'l10n_ar_account.res_IVARI').id
+            vals['l10n_ar_afip_responsibility_type_id'] = self.env.ref(
+                'l10n_ar.res_IVARI').id
         elif imp_iva == 'EX':
-            vals['afip_responsability_type_id'] = self.env.ref(
-                'l10n_ar_account.res_IVAE').id
+            vals['l10n_ar_afip_responsibility_type_id'] = self.env.ref(
+                'l10n_ar.res_IVAE').id
         else:
             _logger.info(
                 "We couldn't infer the AFIP responsability from padron, you"

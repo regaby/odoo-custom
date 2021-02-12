@@ -181,8 +181,8 @@ class ResPartnerUpdateFromPadronWizard(models.TransientModel):
             else:
                 vals[field.field] = field.new_value
         self.partner_id.write(vals)
-        if self.update_constancia:
-            self.partner_id.update_constancia_from_padron_afip()
+        # if self.update_constancia:
+        #     self.partner_id.update_constancia_from_padron_afip()
 
 
     def automatic_process_cb(self):
