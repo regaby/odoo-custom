@@ -104,14 +104,15 @@
         <t t-jquery=".before-footer" t-operation="after">
             <t t-if="order.afip_auth_code and widget.pos.config.receipt_invoice_number">
                 <div class="afip-cae-info"  style="text-align: center; font-size: 75%;">
-                    <div style="overflow: hidden;">
-                        <img t-attf-src="/report/barcode/?type={{'I2of5'}}&amp;value={{order.afip_barcode}}&amp;humanreadable=0&amp;width={{300}}&amp;height={{58}}"  style="width:100%; height:4rem; margin-top: 20px;"/>
+                    <t t-if="order.texto_modificado_qr">
+                        <div style="overflow: hidden;">
+                            <img t-attf-src="/report/barcode/?type={{'QR'}}&amp;value={{order.texto_modificado_qr}}&amp;width={{180}}&amp;height={{180}}" style="width:180px;height:180px" />
+                        </div>
+                    </t>
+                    <strong>CAE:</strong> <t t-esc="order.afip_auth_code"/>
+                    <div style="margin-top:3px;">
+                        <strong>Vto. CAE:</strong> <t t-esc="order.afip_auth_code_due"/>
                     </div>
-                    <div style="font-size:95%;">
-                        <t t-esc="order.afip_barcode"/>
-                    </div>
-                    CAE: <t t-esc="order.afip_auth_code"/><br />
-                    Vto. CAE: <t t-esc="order.afip_auth_code_due"/><br />
                 </div>
             </t>
         </t>
@@ -168,10 +169,10 @@
                 <t t-if="!imp_inclu &amp;&amp; order.invoice_letter == 'A'">
                         <div class="pos-receipt-right-align">--------</div>
                     <br/>
-                    <div>Subtotal<span t-esc='widget.format_currency(receipt.subtotal)' class="pos-receipt-right-align"/></div>
+                    <div><strong>Subtotal</strong><span t-esc='widget.format_currency(receipt.subtotal)' class="pos-receipt-right-align"/></div>
                     <t t-foreach='receipt.tax_details' t-as='tax'>
                         <div>
-                            <t t-esc='tax.name' />
+                            <strong><t t-esc='tax.name' /></strong>
                             <span t-esc='widget.format_currency_no_symbol(tax.amount)' class="pos-receipt-right-align"/>
                         </div>
                     </t>
@@ -179,10 +180,10 @@
                 <t t-if="imp_inclu &amp;&amp; order.invoice_letter == 'A'">
                         <div class="pos-receipt-right-align">--------</div>
                     <br/>
-                    <div>Subtotal<span t-esc='widget.format_currency(receipt.total_without_tax)' class="pos-receipt-right-align"/></div>
+                    <div><strong>Subtotal</strong><span t-esc='widget.format_currency(receipt.total_without_tax)' class="pos-receipt-right-align"/></div>
                     <t t-foreach='receipt.tax_details' t-as='tax'>
                         <div>
-                            <t t-esc='tax.name' />
+                            <strong><t t-esc='tax.name' /></strong>
                             <span t-esc='widget.format_currency_no_symbol(tax.amount)' class="pos-receipt-right-align"/>
                         </div>
                     </t>

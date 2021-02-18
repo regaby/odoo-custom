@@ -109,6 +109,7 @@ odoo.define('l10n_ar_pos_einvoice_ticket', function (require) {
                                          args: [[['id', '=', account_move]], ['afip_auth_code',
                                                                             'afip_auth_code_due',
                                                                             'afip_barcode',
+                                                                            'texto_modificado_qr',
                                                                             //'afip_barcode_img'
                                                                             'l10n_latam_document_type_id',
                                                                             ]],
@@ -116,6 +117,7 @@ odoo.define('l10n_ar_pos_einvoice_ticket', function (require) {
 
                                      ).then(function (invoices) {
                                         self.receipt_data['order']['afip_barcode'] = invoices[0]['afip_barcode'];
+                                        self.receipt_data['order']['texto_modificado_qr'] = invoices[0]['texto_modificado_qr'];
                                         self.receipt_data['order']['afip_auth_code'] = invoices[0]['afip_auth_code'];
                                         self.receipt_data['order']['afip_auth_code_due'] = invoices[0]['afip_auth_code_due'];
                                         //self.receipt_data['order']['afip_barcode_img'] = invoices[0]['afip_barcode_img'];
@@ -192,13 +194,16 @@ odoo.define('l10n_ar_pos_einvoice_ticket', function (require) {
                                      args: [[['id', '=', account_move]], ['afip_auth_code',
                                                                         'afip_auth_code_due',
                                                                         'afip_barcode',
+                                                                        'texto_modificado_qr',
                                                                         //'afip_barcode_img'
                                                                         'l10n_latam_document_type_id',
                                                                         ]],
                                     }
 
                                  ).then(function (invoices) {
+                                    console.log('invoices', invoices);
                                     self.pos.get_order()['afip_barcode'] = invoices[0]['afip_barcode'];
+                                    self.pos.get_order()['texto_modificado_qr'] = invoices[0]['texto_modificado_qr'];
                                     self.pos.get_order()['afip_auth_code'] = invoices[0]['afip_auth_code'];
                                     self.pos.get_order()['afip_auth_code_due'] = invoices[0]['afip_auth_code_due'];
                                     //self.pos.get_order()['afip_barcode_img'] = invoices[0]['afip_barcode_img'];
