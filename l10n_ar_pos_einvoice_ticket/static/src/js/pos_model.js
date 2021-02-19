@@ -109,11 +109,13 @@ odoo.define('l10n_ar_pos_einvoice_ticket', function (require) {
                                      args: [[['id', '=', invoice_id]], ['afip_auth_code',
                                                                         'afip_cae_due',
                                                                         'afip_barcode',
+                                                                        'texto_modificado_qr',
                                                                         'afip_barcode_img']],
                                     }
 
                                  ).then(function (invoices) {
                                     self.receipt_data['order']['afip_barcode'] = invoices[0]['afip_barcode'];
+                                    self.receipt_data['order']['texto_modificado_qr'] = invoices[0]['texto_modificado_qr'];
                                     self.receipt_data['order']['afip_auth_code'] = invoices[0]['afip_auth_code'];
                                     self.receipt_data['order']['afip_cae_due'] = invoices[0]['afip_cae_due'];
                                     self.receipt_data['order']['afip_barcode_img'] = invoices[0]['afip_barcode_img'];
@@ -188,11 +190,13 @@ odoo.define('l10n_ar_pos_einvoice_ticket', function (require) {
                                  args: [[['id', '=', invoice_id]], ['afip_auth_code',
                                                                     'afip_cae_due',
                                                                     'afip_barcode',
+                                                                    'texto_modificado_qr',
                                                                     'afip_barcode_img']],
                                 }
 
                              ).then(function (invoices) {
                                 self.pos.get_order()['afip_barcode'] = invoices[0]['afip_barcode'];
+                                self.pos.get_order()['texto_modificado_qr'] = invoices[0]['texto_modificado_qr'];
                                 self.pos.get_order()['afip_auth_code'] = invoices[0]['afip_auth_code'];
                                 self.pos.get_order()['afip_cae_due'] = invoices[0]['afip_cae_due'];
                                 self.pos.get_order()['afip_barcode_img'] = invoices[0]['afip_barcode_img'];

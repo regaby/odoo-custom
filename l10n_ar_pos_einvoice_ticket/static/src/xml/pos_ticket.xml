@@ -13,13 +13,13 @@
         </t>
         <t t-jquery=".receipt-user" t-operation="replace">
             <t t-if="order.invoice_number and widget.pos.config.receipt_invoice_number">
-                <div>------------------------------------------</div>
+                <hr />
                 <strong>
                 FACTURA <t t-esc="order.invoice_letter"/><br />
                 N° DE FACTURA: <t t-esc="order.invoice_number"/><br />
                 FECHA: <t t-esc="order.formatted_validation_date"/></strong>
 
-                <div>__________________________________________</div>
+                <hr />
             </t>
             <t t-set="client" t-value="order.get_client()"/>
             <t t-if="client and widget.pos.config.receipt_customer_vat">
@@ -45,22 +45,23 @@
                 <t t-if="client['website']">
                     Website: <t t-esc="client['website']"/><br />
                 </t>
-                <div>__________________________________________</div>
+                <hr />
                 REF. INTERNA: <t t-esc="order.name"/>
-                <div>__________________________________________</div>
+                <hr />
             </t>
         </t>
         <t t-jquery=".receipt-change" t-operation="after">
             <t t-if="order.afip_auth_code and widget.pos.config.receipt_invoice_number">
-                <br />
-                <div style="overflow: hidden;">
-                    <img t-attf-src="data:image/*;base64,{{order.afip_barcode_img}}" style="height: 58px;  width: 300px;"/>
+                <div class="pos-center-align">
+                    <br />
+                    <t t-if="order.texto_modificado_qr">
+                        <div style="overflow: hidden;">
+                            <img t-attf-src="/report/barcode/?type={{'QR'}}&amp;value={{order.texto_modificado_qr}}&amp;width={{180}}&amp;height={{180}}" style="width:180px;height:180px" />
+                        </div>
+                    </t>
+                    CAE: <t t-esc="order.afip_auth_code"/><br />
+                    Vto. CAE: <t t-esc="order.afip_cae_due"/><br />
                 </div>
-                <div style='text-align:center'>
-                    <t t-esc="order.afip_barcode"/><br />
-                </div>
-                CAE: <t t-esc="order.afip_auth_code"/><br />
-                Vto. CAE: <t t-esc="order.afip_cae_due"/><br />
             </t>
         </t>
         <t t-jquery=".receipt-orderlines" t-operation="replace">
