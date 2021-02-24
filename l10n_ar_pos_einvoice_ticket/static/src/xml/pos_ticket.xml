@@ -38,7 +38,7 @@
                         </t>
                         <br />
                     N° DE FACTURA: <t t-esc="order.invoice_number"/><br />
-                    FECHA: <t t-esc="order.formatted_validation_date"/></strong>
+                    FECHA: <t t-esc="order.invoice_date"/></strong>
                     <br />
                     <hr />
                 </div>

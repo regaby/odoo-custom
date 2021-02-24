@@ -197,6 +197,7 @@ odoo.define('l10n_ar_pos_einvoice_ticket', function (require) {
                                                                         'texto_modificado_qr',
                                                                         //'afip_barcode_img'
                                                                         'l10n_latam_document_type_id',
+                                                                        'invoice_date',
                                                                         ]],
                                     }
 
@@ -208,6 +209,7 @@ odoo.define('l10n_ar_pos_einvoice_ticket', function (require) {
                                     self.pos.get_order()['afip_auth_code_due'] = invoices[0]['afip_auth_code_due'];
                                     //self.pos.get_order()['afip_barcode_img'] = invoices[0]['afip_barcode_img'];
                                     self.pos.get_order()['l10n_latam_document_type_id'] = invoices[0]['l10n_latam_document_type_id'][1].split(" ")[0];
+                                    self.pos.get_order()['invoice_date'] = invoices[0]['invoice_date'];
                                     self.$('.pos-receipt-container').html(qweb.render('OrderReceipt', self.get_receipt_render_env()));
 
                                  });
