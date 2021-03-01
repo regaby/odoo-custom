@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+    <!-- Printed Invoice -->
+        <record id="l10n_ar_aeroo_einvoice.action_aeroo_report_ar_einvoice" model="ir.actions.report.xml">
+            <field name="report_rml">l10n_ar_aeroo_einvoice_qr/einvoice_with_footer.odt</field>
+        </record>
+
+    </data>
+</openerp>
