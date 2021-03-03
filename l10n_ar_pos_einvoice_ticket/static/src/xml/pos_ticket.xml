@@ -55,13 +55,15 @@
         </t>
         <t t-jquery=".receipt-change" t-operation="after">
             <t t-if="order.afip_auth_code and widget.pos.config.receipt_invoice_number">
-                <br />
-                <div style="overflow: hidden;">
-                    <img t-attf-src="data:image/*;base64,{{order.afip_barcode_img}}" style="height: 58px;  width: 100%;"/>
+                <hr />
+                <div align="center" style="overflow: hidden;">
+                    <img t-attf-src="data:image/*;base64,{{order.afip_qr_code_img}}" style="width: 150px "/>
                 </div>
+                <!--
                 <div style='text-align:center'>
                     <t t-esc="order.afip_barcode"/><br />
                 </div>
+                -->
                 CAE: <t t-esc="order.afip_auth_code"/><br />
                 Vto. CAE: <t t-esc="order.afip_cae_due"/><br />
             </t>
