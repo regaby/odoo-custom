@@ -19,7 +19,7 @@
 
     'license': "OPL-1",
 
-    'installable': True,
+    'installable': False,
     'application': True,
 
     'images': ['static/description/banner.png'],

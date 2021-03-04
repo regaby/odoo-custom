@@ -15,5 +15,5 @@
         'static/src/xml/pos_ticket.xml',
         'static/src/xml/xml_receipt.xml',
     ],
-    'installable': True,
+    'installable': False,
 }
