@@ -63,8 +63,8 @@
                 <!--
                 <div style='text-align:center'>
                     <t t-esc="order.afip_barcode"/><br />
-                -->
                 </div>
+                -->
                 CAE: <t t-esc="order.afip_auth_code"/><br />
                 Vto. CAE: <t t-esc="order.afip_cae_due"/><br />
             </t>
