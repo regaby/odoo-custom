@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- <templates id="template" xml:space="preserve">
+<templates id="template" xml:space="preserve">
 
     <t t-extend="PaymentScreenWidget">
         <t t-jquery=".payment-buttons" t-operation="replace">
@@ -19,7 +19,7 @@
                     <t t-if='widget.pos.get_order()'>
                         <div t-attf-class='button js_invoice #{ widget.pos.get_order().is_to_invoice() ? "highlight" : ""} '>
                             <i class='fa fa-file-text-o' /> Factura Oficial AFIP
-                        </div> -->
+                        </div>
                     </t>
                 </t>
                 <t t-if='widget.pos.config.tip_product_id'>
