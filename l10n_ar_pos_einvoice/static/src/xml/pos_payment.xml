@@ -14,7 +14,6 @@
                             Customer
                         </t>
                     </span>
-                <!--
                 </div>
                 <t t-if='widget.pos.config.iface_invoicing'>
                     <t t-if='widget.pos.get_order()'>
@@ -23,7 +22,6 @@
                         </div>
                     </t>
                 </t>
-                -->
                 <t t-if='widget.pos.config.tip_product_id'>
                     <div class='button js_tip'>
                         <i class='fa fa-heart' /> Tip
@@ -35,7 +33,8 @@
                     </div>
                 </t>
              </div>
-            </t>
+        </t>
+    </t>
 
 
 </templates>
