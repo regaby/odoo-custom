@@ -17,7 +17,7 @@
             <t t-if="order.invoice_number and widget.pos.config.receipt_invoice_number">
                 <div>------------------------------------------</div>
                 <strong>
-                FACTURA <t t-esc="order.invoice_letter"/><br />
+                FACTURA <t t-esc="order.invoice_letter"/> - ORIGINAL - COD <t t-esc="order.document_type_id"/><br />
                 N° DE FACTURA: <t t-esc="order.invoice_number"/><br />
                 FECHA: <t t-esc="order.formatted_validation_date"/></strong>
 
