@@ -14,6 +14,7 @@
                             Customer
                         </t>
                     </span>
+                <!--
                 </div>
                 <t t-if='widget.pos.config.iface_invoicing'>
                     <t t-if='widget.pos.get_order()'>
@@ -21,6 +22,7 @@
                             <i class='fa fa-file-text-o' /> Factura Oficial AFIP
                         </div>
                     </t>
+                -->
                 </t>
                 <t t-if='widget.pos.config.tip_product_id'>
                     <div class='button js_tip'>
