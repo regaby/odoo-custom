@@ -16,9 +16,9 @@
                 <br/>
             </t>
             <!-- Company Name -->
-            <!-- <t t-if='receipt.company.name'>
+            de <t t-if='receipt.company.name'>
                 <h1><t t-esc='receipt.company.name' /></h1><br/>
-            </t> -->
+            </t>
             <div class="afip-info" font="b">
                 <div>
                     CUIT: <t t-esc="order.main_id_number"/>
