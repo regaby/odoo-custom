@@ -2,7 +2,7 @@
 <templates id="template" xml:space="preserve">
 
     <t t-name="XmlReceipt">
-        <receipt align='center' width='50' value-thousands-separator='' >
+        <receipt align='center' width='95%' value-thousands-separator='' >
             <!-- Header -->
             <t t-if='receipt.header_xml'>
                 <t t-raw='receipt.header_xml' />
@@ -17,7 +17,7 @@
             </t>
             <!-- Company Name -->
             de <t t-if='receipt.company.name'>
-                <h3><t t-esc='receipt.company.name' /></h3><br/>
+                <h4><t t-esc='receipt.company.name' /></h4><br/>
             </t>
             <div class="afip-info" font="b">
                 <div>
