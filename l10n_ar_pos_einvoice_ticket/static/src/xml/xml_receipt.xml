@@ -201,7 +201,7 @@
             <div class='before-footer' />
 
             <t t-if="order.afip_auth_code and widget.pos.config.receipt_invoice_number">
-                <br />
+                <hr />
                 <div style="overflow: hidden;">
                     <img t-attf-src="data:image/*;base64,{{order.afip_qr_code_img}}"/>
                 </div>
