@@ -2,7 +2,7 @@
 <templates id="template" xml:space="preserve">
 
     <t t-name="XmlReceipt">
-        <receipt align='center' width='40' value-thousands-separator='' >
+        <receipt align='center' width='50' value-thousands-separator='' >
             <!-- Header -->
             <t t-if='receipt.header_xml'>
                 <t t-raw='receipt.header_xml' />
