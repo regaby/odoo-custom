@@ -43,13 +43,13 @@
             </div>
 
             <t t-if="order.invoice_number and widget.pos.config.receipt_invoice_number">
-                <div>-----------------------------------------------</div>
+                <hr />
                 <div>
                 FACTURA <t t-esc="order.invoice_letter"/> - ORIGINAL - COD <t t-esc="order.document_type_id"/><br />
                 N° <t t-esc="order.invoice_number"/><br />
                 FECHA: <t t-esc="receipt.date.localestring"/>
                 </div>
-                <div>-----------------------------------------------</div>
+                <hr />
             </t>
 
             <t t-set="client" t-value="order.get_client()"/>
@@ -73,7 +73,7 @@
                 <t t-if="client['website']">
                     Website: <t t-esc="client['website']"/><br />
                 </t>
-                <div>-----------------------------------------------</div>
+                <hr />
                 <br/>
             </t>
 
@@ -230,7 +230,7 @@
 
             <t t-if='receipt.cashier'>
                 <div class='cashier'>
-                    <div>-----------------------------------------------</div>
+                    <hr />
                     <div>Served by <t t-esc='receipt.cashier' /></div>
                 </div>
             </t>
