@@ -17,7 +17,7 @@
             </t>
             <!-- Company Name -->
             de <t t-if='receipt.company.name'>
-                <h1><t t-esc='receipt.company.name' /></h1><br/>
+                <h3><t t-esc='receipt.company.name' /></h3><br/>
             </t>
             <div class="afip-info" font="b">
                 <div>
