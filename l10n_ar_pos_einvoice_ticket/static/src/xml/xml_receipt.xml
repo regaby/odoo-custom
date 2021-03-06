@@ -11,14 +11,14 @@
                 <div><t t-esc='receipt.header' /></div>
             </t>
             <!-- Company Logo -->
-            <!--<t t-if='receipt.company.logo'>
+            <t t-if='receipt.company.logo'>
                 <img t-att-src='receipt.company.logo' />
                 <br/>
-            </t>-->
-            <!-- Company Name -->
-            <t t-if='receipt.company.name'>
-                <h1><t t-esc='receipt.company.name' /></h1><br/>
             </t>
+            <!-- Company Name -->
+            <!-- <t t-if='receipt.company.name'>
+                <h1><t t-esc='receipt.company.name' /></h1><br/>
+            </t> -->
             <div class="afip-info" font="b">
                 <div>
                     CUIT: <t t-esc="order.main_id_number"/>
@@ -202,11 +202,12 @@
             <t t-if="order.afip_auth_code and widget.pos.config.receipt_invoice_number">
                 <br />
                 <div style="overflow: hidden;">
-                    <img t-attf-src="data:image/*;base64,{{order.afip_qr_code_img}}" style="width: 150px "/>
+                    <img t-attf-src="data:image/*;base64,{{order.afip_qr_code_img}}"/>
                 </div>
                 <!-- <div style='text-align:center' font="b">
                     <t t-esc="order.afip_barcode"/><br />
                 </div> -->
+                <br />
                 <div font="b">
                 CAE: <t t-esc="order.afip_auth_code"/> Vto. CAE: <t t-esc="order.afip_cae_due"/><br />
                 </div>
