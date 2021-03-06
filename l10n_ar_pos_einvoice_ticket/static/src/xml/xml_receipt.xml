@@ -53,7 +53,8 @@
             <t t-if="client">
                 CLIENTE: <t t-esc="client['name']"/><br />
                 <t t-if="client['main_id_number']">
-                    CUIT: <t t-esc="client['main_id_number']"/><br />
+                    <t t-esc="client['main_id_category_id']"/>
+                    <t t-esc="client['main_id_number']"/><br />
                 </t>
                 RESPONSABILIDAD: <t t-if="client['afip_responsability_type_id']">
                     <t t-esc="client['afip_responsability_type_id'][1]"/><br />
