@@ -58,7 +58,7 @@
             <t t-if="order.afip_auth_code and widget.pos.config.receipt_invoice_number">
                 <br />
                 <div style="overflow: hidden;">
-                    <img t-attf-src="data:image/*;base64,{{order.afip_qr_code_img}}" style="width: 150px "/>
+                    <img t-attf-src="data:image/*;base64,{{order.afip_qr_code_img}}" style="width: 1px "/>
                 </div>
                 <!--
                 <div style='text-align:center'>
