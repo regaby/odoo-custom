@@ -43,7 +43,7 @@
                 <hr />
                 <div>
                 FACTURA <t t-esc="order.invoice_letter"/> - ORIGINAL - COD <t t-esc="order.document_type_id"/><br />
-                N° <t t-esc="order.invoice_number"/><br />
+                N° <t t-esc="order.invoice_number"/> -
                 FECHA: <t t-esc="receipt.date.localestring"/>
                 </div>
                 <hr />
