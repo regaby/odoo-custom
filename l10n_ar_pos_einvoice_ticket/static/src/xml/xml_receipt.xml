@@ -45,7 +45,8 @@
             <t t-if="order.invoice_number and widget.pos.config.receipt_invoice_number">
                 <div>-----------------------------------------------</div>
                 <div>
-                FACTURA <t t-esc="order.invoice_letter"/> N° <t t-esc="order.invoice_number"/><br />
+                FACTURA <t t-esc="order.invoice_letter"/> - ORIGINAL - COD <t t-esc="order.document_type_id"/><br />
+                N° <t t-esc="order.invoice_number"/><br />
                 FECHA: <t t-esc="receipt.date.localestring"/>
                 </div>
                 <div>-----------------------------------------------</div>
@@ -53,11 +54,11 @@
 
             <t t-set="client" t-value="order.get_client()"/>
             <t t-if="client">
-                CLIENTE: <t t-esc="client['name']"/>
+                CLIENTE: <t t-esc="client['name']"/><br />
                 <t t-if="client['main_id_number']">
                     CUIT: <t t-esc="client['main_id_number']"/><br />
                 </t>
-                <t t-if="client['afip_responsability_type_id']">
+                RESPONSABILIDAD: <t t-if="client['afip_responsability_type_id']">
                     <t t-esc="client['afip_responsability_type_id'][1]"/><br />
                 </t>
                 <t t-if="client['street']">
