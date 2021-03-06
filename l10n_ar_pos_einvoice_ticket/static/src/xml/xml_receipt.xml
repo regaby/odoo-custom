@@ -64,6 +64,12 @@
                 <t t-if="client['street']">
                     DIRECCION: <t t-esc="client['street']"/><br />
                 </t>
+                <t t-if="client['city']">
+                    Ciudad: <t t-esc="client['city']"/><br /> 
+                </t>
+                <t t-if="client['state_id']">
+                    Prov: <t t-esc="client['state_id']"/><br />
+                </t>
                 <t t-if="client['email']">
                     Email: <t t-esc="client['email']"/><br />
                 </t>
