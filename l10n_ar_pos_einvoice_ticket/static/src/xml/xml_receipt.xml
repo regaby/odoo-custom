@@ -25,10 +25,7 @@
                     <t t-esc="order.afip_responsability_type_id"/>
                 </div>
                 <div>
-                    IIBB: <t t-esc="order.gross_income_number"/>
-                </div>
-                <div>
-                    Inicio de actividades: <t t-esc="order.start_date"/>
+                    IIBB: <t t-esc="order.gross_income_number"/> - Inic. Act.: <t t-esc="order.start_date"/>
                 </div>
                 <div>
                     Dirección:<t t-esc="order.street"/>
