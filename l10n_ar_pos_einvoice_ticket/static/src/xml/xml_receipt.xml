@@ -59,13 +59,13 @@
                     <t t-esc="client['afip_responsability_type_id'][1]"/><br />
                 </t>
                 <t t-if="client['street']">
-                    DIRECCION: <t t-esc="client['street']"/><br />
+                    DIRECCION: <t t-esc="client['street']"/>, 
                 </t>
                 <t t-if="client['city']">
-                    Ciudad: <t t-esc="client['city']"/><br /> 
+                    <t t-esc="client['city']"/>,  
                 </t>
                 <t t-if="client['state_id']">
-                    Prov: <t t-esc="client['state_id']"/><br />
+                    <t t-esc="client['state_id']"/>, 
                 </t>
                 <t t-if="client['email']">
                     Email: <t t-esc="client['email']"/><br />
