@@ -59,6 +59,7 @@
                 <div align="center" style="overflow: hidden;">
                     <img t-attf-src="data:image/*;base64,{{order.afip_qr_code_img}}" style="width: 150px "/>
                 </div>
+                <br />
                 <!--
                 <div style='text-align:center'>
                     <t t-esc="order.afip_barcode"/><br />
