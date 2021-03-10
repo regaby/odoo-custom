@@ -2,7 +2,7 @@
 <templates id="template" xml:space="preserve">
 
     <t t-name="XmlReceipt">
-        <receipt align='center' width='40' value-thousands-separator='' >
+        <receipt align='center' width='48' value-thousands-separator='' >
             <!-- Header -->
             <t t-if='receipt.header_xml'>
                 <t t-raw='receipt.header_xml' />
@@ -11,13 +11,13 @@
                 <div><t t-esc='receipt.header' /></div>
             </t>
             <!-- Company Logo -->
-            <!--<t t-if='receipt.company.logo'>
+            <t t-if='receipt.company.logo'>
                 <img t-att-src='receipt.company.logo' />
                 <br/>
-            </t>-->
+            </t>
             <!-- Company Name -->
             <t t-if='receipt.company.name'>
-                <h1><t t-esc='receipt.company.name' /></h1><br/>
+                <t t-esc='receipt.company.name' /><br/>
             </t>
             <t t-if="order.invoice_number">
                 <div class="afip-info" font="b">
@@ -27,29 +27,26 @@
                     </div>
                     <div>
                         IIBB: <t t-esc="order.gross_income_number"/>
+                         - Inic. de Act.: <t t-esc="order.start_date"/>
                     </div>
                     <div>
-                        Inicio de actividades: <t t-esc="order.start_date"/>
-                    </div>
-                    <div>
-                        Dirección:<t t-esc="order.street"/>
+                        Dirección: <t t-esc="order.street"/>
                     </div>
                     <div>
                         <t t-if='order.phone'>
                             <div>
-                            Teléfono:<t t-esc="order.phone"/>
+                            Teléfono: <t t-esc="order.phone"/>
                             </div>
                         </t>
                     </div>
                 </div>
-            </t>
+           </t>
+           <hr />
 
             <t t-if="order.invoice_number and widget.pos.config.receipt_invoice_number">
-                <hr />
-                <div style='text-align:left'>
+                <div>
                 FACTURA <t t-esc="order.invoice_letter"/> - ORIGINAL - COD <t t-esc="order.document_type_id"/><br />
-                N° <t t-esc="order.invoice_number"/><br />
-                FECHA: <t t-esc="receipt.date.localestring"/>
+                N° <t t-esc="order.invoice_number"/> - FECHA: <t t-esc="receipt.date.localestring"/>
                 </div>
                 <hr />
             </t>
@@ -58,22 +55,29 @@
             <t t-if="client">
                 CLIENTE: <t t-esc="client['name']"/><br />
                 <t t-if="client['main_id_number']">
-                    CUIT: <t t-esc="client['main_id_number']"/><br />
+                    <t t-esc="client['main_id_category_id'][1]"/>
+                    : <t t-esc="client['main_id_number']"/><br />
                 </t>
                 <t t-if="client['afip_responsability_type_id']">
                     RESPON.: <t t-esc="client['afip_responsability_type_id'][1]"/><br />
                 </t>
                 <t t-if="client['street']">
-                    DIRECCION: <t t-esc="client['street']"/><br />
+                    DIRECC.: <t t-esc="client['street']"/>, 
+                </t>
+                <t t-if="client['city']">
+                    <t t-esc="client['city']"/>, 
+                </t>
+                <t t-if="client['state_id']">
+                    <t t-esc="client['state_id']"/><br />
                 </t>
                 <t t-if="client['email']">
-                    Email: <t t-esc="client['email']"/><br />
+                    EMAIL: <t t-esc="client['email']"/><br />
                 </t>
                 <t t-if="client['phone'] or client['mobile']">
-                    Tel: <t t-esc="client['phone'] || client['mobile']"/><br />
+                    TEL: <t t-esc="client['phone'] || client['mobile']"/><br />
                 </t>
                 <t t-if="client['website']">
-                    Website: <t t-esc="client['website']"/><br />
+                    WEBSITE: <t t-esc="client['website']"/><br />
                 </t>
                 <hr />
             </t>
@@ -154,7 +158,6 @@
                 <left><pre>        TOTAL</pre></left>
                 <right><value t-att-value-decimals='pos.currency.decimals'><t t-esc='receipt.total_with_tax' /></value></right>
             </line>
-            <br/>
             <hr />
 
             <!-- Payment Lines -->
@@ -172,7 +175,6 @@
                     <left><pre>        CHANGE</pre></left>
                     <right><value t-att-value-decimals='pos.currency.decimals'><t t-esc='receipt.change' /></value></right>
                 </line>
-                <br/>
             </t>
 
             <!-- Extra Payment Info -->
