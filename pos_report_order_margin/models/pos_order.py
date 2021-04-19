@@ -3,6 +3,8 @@
 from odoo import api, fields, models
 import odoo.addons.decimal_precision as dp
 from odoo.exceptions import ValidationError
+import logging
+_logger = logging.getLogger(__name__)
 
 
 class PosOrder(models.Model):
@@ -84,5 +86,7 @@ class PosOrderLine(models.Model):
         #     line.order_id.pricelist_id, line.product_id, uom,
         #     line.order_id.date_order)['purchase_price']
         price = line.product_id.standard_price
-        raise ValidationError(price)
+        #raise ValidationError(price)
+        _logger.info('product_id %s'%line.product_id.name)
+        _logger.info('price %s'%price)
         return price
