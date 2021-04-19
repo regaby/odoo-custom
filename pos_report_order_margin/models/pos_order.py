@@ -2,6 +2,7 @@
 
 from odoo import api, fields, models
 import odoo.addons.decimal_precision as dp
+from odoo.exceptions import ValidationError
 
 
 class PosOrder(models.Model):
@@ -82,4 +83,6 @@ class PosOrderLine(models.Model):
         # return SaleOrderLine._compute_margin(
         #     line.order_id.pricelist_id, line.product_id, uom,
         #     line.order_id.date_order)['purchase_price']
-        return line.product_id.standard_price
+        price = line.product_id.standard_price
+        raise ValidationError(price)
+        return price
