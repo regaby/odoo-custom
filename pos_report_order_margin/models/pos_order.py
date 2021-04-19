@@ -79,6 +79,6 @@ class PosOrderLine(models.Model):
         SaleOrderLine = self.env['sale.order.line']
         uom = hasattr(line, 'uom_id') and line.uom_id or line.product_id.uom_id
 
-        return SaleOrderLine._get_purchase_price(
+        return SaleOrderLine._compute_margin(
             line.order_id.pricelist_id, line.product_id, uom,
             line.order_id.date_order)['purchase_price']
