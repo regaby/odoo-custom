@@ -7,8 +7,9 @@ import odoo.addons.decimal_precision as dp
 class PosOrder(models.Model):
     _inherit = 'pos.order'
 
+    # Columns Section
     margin = fields.Float(
-        string='Margin',
+        string='Margen',
         compute='_compute_margin',
         store=True,
         digits=dp.get_precision('Product Price'),
@@ -16,12 +17,13 @@ class PosOrder(models.Model):
         " the Unit Price and the cost price.")
 
     margin_percent = fields.Float(
-        string='Margin (%)',
+        string='Margen (%)',
         compute='_compute_margin',
         store=True,
         digits=dp.get_precision('Product Price'),
     )
 
+    # Compute Section
     @api.depends('lines.margin', 'lines.price_subtotal')
     def _compute_margin(self):
         for order in self:
@@ -37,27 +39,29 @@ class PosOrder(models.Model):
 class PosOrderLine(models.Model):
     _inherit = 'pos.order.line'
 
+    # Columns Section
     margin = fields.Float(
-        string='Margin',
+        string='Margen',
         compute='_compute_multi_margin',
         store=True,
         digits=dp.get_precision('Product Price'),
     )
 
     margin_percent = fields.Float(
-        string='Margin (%)',
+        string='Margen (%)',
         compute='_compute_multi_margin',
         store=True,
         digits=dp.get_precision('Product Price'),
     )
 
     purchase_price = fields.Float(
-        string='Cost Price',
+        string='Precio de Costo',
         compute='_compute_multi_margin',
         store=True,
         digits=dp.get_precision('Product Price'),
     )
 
+    # Compute Section
     @api.depends('product_id', 'qty', 'price_subtotal')
     def _compute_multi_margin(self):
         for line in self.filtered('product_id'):
