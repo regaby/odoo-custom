@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Creo wizard y acción de importación del archivo-->
+        <record id="import_product_variant_form" model="ir.ui.view">
+            <field name="name">import.product.variant.wizard</field>
+            <field name="model">import.product.variant</field>
+            <field name="arch" type="xml">
+                <form string="Import Product Variant">
+                    <!-- PANTALLA 1-->
+                    <group states="choose">
+                        <group >
+                            <field name="file" required="1"/>
+                            <field name="product_filter" required="1"/>
+                        </group>
+                    </group>
+                    <footer states="choose">
+                        <button type="object" name="import_file" string="Import" class="oe_highlight"/>
+                        <button string="Close" class="oe_link" special="cancel"/>
+                        <field invisible="1" name="state"/>
+                    </footer>
+                    <!-- PANTALLA 2-->
+                    <group colspan="4" col="4" states="done">
+                        <separator string="Fin del proceso" colspan="4"/>
+                        <field name="info" colspan="4" nolabel="1"/>
+                    </group>
+                    <footer states="done">
+                        <button special="cancel" class="oe_link" string="Close"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="import_product_variant_action" model="ir.actions.act_window">
+            <field name="name">Import Product Variant</field>
+            <field name="res_model">import.product.variant</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem id="import_product_variant_menu" name="Import Product Variant" action="import_product_variant_action" parent="sale.product_menu_catalog" sequence="10"/>
+
+    </data>
+</odoo>
