@@ -224,6 +224,7 @@ odoo.define('l10n_ar_pos_einvoice_ticket', function (require) {
     
             console.log('this.pos.proxy.printer', this.pos.proxy.printer);
             if (!this.pos.proxy.printer) { // browser (html) printing
+                console.log('printing...');
     
                 // The problem is that in chrome the print() is asynchronous and doesn't
                 // execute until all rpc are finished. So it conflicts with the rpc used
@@ -249,6 +250,7 @@ odoo.define('l10n_ar_pos_einvoice_ticket', function (require) {
     
                 this.print_web();
             } else {    // proxy (html) printing
+                console.log('printing else....');
                 this.print_html();
                 this.lock_screen(false);
             }
