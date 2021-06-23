@@ -203,9 +203,9 @@ odoo.define('l10n_ar_pos_einvoice_ticket', function (require) {
                                     self.pos.get_order()['l10n_latam_document_type_id'] = invoices[0]['l10n_latam_document_type_id'][1].split(" ")[0];
                                     self.pos.get_order()['invoice_date'] = invoices[0]['invoice_date'];
                                     self.$('.pos-receipt-container').html(qweb.render('OrderReceipt', self.get_receipt_render_env()));
-                                    if (self.should_auto_print() && !self.pos.get_order().is_to_email()) {
-                                        this.print();
-                                    }
+                                    // if (self.should_auto_print() && !self.pos.get_order().is_to_email()) {
+                                    //     this.print();
+                                    // }
                                  });
                              });
                             });
@@ -219,15 +219,15 @@ odoo.define('l10n_ar_pos_einvoice_ticket', function (require) {
                 this._super();
             }
         },
-        handle_auto_print: function() {
-            if (this.should_auto_print() && !this.pos.get_order().is_to_email()) {
-                //this.print();
-                if (this.should_close_immediately()){
-                    this.click_next();
-                }
-            } else {
-                this.lock_screen(false);
-            }
-        },
+        // handle_auto_print: function() {
+        //     if (this.should_auto_print() && !this.pos.get_order().is_to_email()) {
+        //         //this.print();
+        //         if (this.should_close_immediately()){
+        //             this.click_next();
+        //         }
+        //     } else {
+        //         this.lock_screen(false);
+        //     }
+        // },
     })
 });
