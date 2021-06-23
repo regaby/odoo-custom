@@ -222,6 +222,7 @@ odoo.define('l10n_ar_pos_einvoice_ticket', function (require) {
         print: function() {
             var self = this;
     
+            console.log('this.pos.proxy.printer', this.pos.proxy.printer);
             if (!this.pos.proxy.printer) { // browser (html) printing
     
                 // The problem is that in chrome the print() is asynchronous and doesn't
