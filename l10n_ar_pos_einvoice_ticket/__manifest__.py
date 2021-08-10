@@ -2,18 +2,21 @@
 {
     'name': 'POS einvoice ticket',
     'version': '0.1',
-    'author': 'Localizacion arg.',
+    'author': 'Ing. Gabriela Rivero',
     'license': 'LGPL-3',
     'category': 'Point Of Sale',
-    'website': 'Localizacion arg.',
-    'depends': ['point_of_sale', 'l10n_ar', 'l10n_ar_fe_qr'],
+    'website': 'www.galup.com.ar',
+    'depends': [
+        'point_of_sale',
+        'l10n_ar',
+        'l10n_ar_fe_qr',
+    ],
     'data': [
         'views/pos_einvoice_ar.xml',
         'views/pos_config.xml',
     ],
     'qweb': [
         'static/src/xml/pos_ticket.xml',
-        'static/src/xml/xml_receipt.xml',
     ],
-    'installable': False,
+    'installable': True,
 }

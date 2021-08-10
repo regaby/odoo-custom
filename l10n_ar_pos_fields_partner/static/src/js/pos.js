@@ -1,19 +1,17 @@
 odoo.define('l10n_ar_pos_fields_partner.PosModel', function (require) {
 "use strict";
 
-    //var core = require('web.core');
-    var pos_model = require('point_of_sale.models');
-    //var pos_chrome = require('point_of_sale.chrome')
+    const ClientListScreen = require('point_of_sale.ClientListScreen');
+    const Registries = require('point_of_sale.Registries');
+    const pos_model = require('point_of_sale.models');
     var models = pos_model.PosModel.prototype.models;
     var PosModelSuper = pos_model.PosModel;
-    var screens = require('point_of_sale.screens');
-    var core = require('web.core');
-    var _t = core._t;
-    //var OrderSuper = pos_model.Order;
-    //var OrderlineSuper = pos_model.Orderline;
 
-    pos_model.load_fields('res.partner', ['l10n_latam_identification_type_id',
-                                          'l10n_ar_afip_responsibility_type_id']);
+    pos_model.load_fields('res.partner',
+    [
+        'l10n_latam_identification_type_id',
+        'l10n_ar_afip_responsibility_type_id'
+    ]);
 
     models.push(
         {
@@ -47,38 +45,34 @@ odoo.define('l10n_ar_pos_fields_partner.PosModel', function (require) {
         },
     });
 
-    screens.ClientListScreenWidget.include({
-        save_client_details: function (partner) {
-            var self = this;
-            var fields = {};
-            this.$('.client-details-contents .detail').each(function(idx,el){
-                if (self.integer_client_details.includes(el.name)){
-                    var parsed_value = parseInt(el.value, 10);
-                    if (isNaN(parsed_value)){
-                        fields[el.name] = false;
-                    }
-                    else{
-                        fields[el.name] = parsed_value
-                    }
-                }
-                else{
-                    fields[el.name] = el.value || false;
-                }
-            });
-            // si es responsable inscripto, vat is required
-            if (!fields.vat && fields.l10n_ar_afip_responsibility_type_id == '1' ) {
-                this.gui.show_popup('error',_t('El campo CUIT (NIF) es requerido.'));
-                return;
-            }
-            // si es responsable inscripto, el tipo de documento debe ser cuit
-            if (fields.l10n_latam_identification_type_id != '4' && fields.l10n_ar_afip_responsibility_type_id == '1' ) {
-                this.gui.show_popup('error',_t('Seleccione Tipo Doc. CUIT'));
-                return;
-            }
-            this._super(partner);
-        },
+    const PosClientListScreen = (ClientListScreen) =>
+        class extends ClientListScreen {
 
-    });
+            async saveChanges(event) {
+                var self = this;
+                let fields = event.detail.processedChanges;
+                // si es responsable inscripto, vat is required
+                if (!fields.vat && fields.l10n_ar_afip_responsibility_type_id == '1' ) {
+                    await this.showPopup('ErrorPopup', {
+                        title: this.env._t('Falta CUIT'),
+                        body: this.env._t('El campo CUIT (NIF) es requerido.'),
+                    });
+                    return;
+                }
+                // si es responsable inscripto, el tipo de documento debe ser cuit
+                if (fields.l10n_latam_identification_type_id != '4' && fields.l10n_ar_afip_responsibility_type_id == '1' ) {
+                    await this.showPopup('ErrorPopup', {
+                        title: this.env._t('Falta CUIT'),
+                        body: this.env._t('Seleccione Tipo Doc. CUIT'),
+                    });
+                    return;
+                }
+                return super.saveChanges(event);
+            }
 
+        }
+        Registries.Component.extend(ClientListScreen, PosClientListScreen);
+
+        return ClientListScreen;
 
 });
