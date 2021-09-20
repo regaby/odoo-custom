@@ -203,7 +203,9 @@ odoo.define('l10n_ar_pos_einvoice_ticket', function (require) {
                                     self.pos.get_order()['l10n_latam_document_type_id'] = invoices[0]['l10n_latam_document_type_id'][1].split(" ")[0];
                                     self.pos.get_order()['invoice_date'] = invoices[0]['invoice_date'];
                                     self.$('.pos-receipt-container').html(qweb.render('OrderReceipt', self.get_receipt_render_env()));
-
+                                    // if (self.should_auto_print() && !self.pos.get_order().is_to_email()) {
+                                    //     this.print();
+                                    // }
                                  });
                              });
                             });
@@ -216,6 +218,52 @@ odoo.define('l10n_ar_pos_einvoice_ticket', function (require) {
             } else {
                 this._super();
             }
-        }
+        },
+        print: function() {
+            var self = this;
+    
+            console.log('this.pos.proxy.printer', this.pos.proxy.printer);
+            if (!this.pos.proxy.printer) { // browser (html) printing
+                console.log('printing...');
+    
+                // The problem is that in chrome the print() is asynchronous and doesn't
+                // execute until all rpc are finished. So it conflicts with the rpc used
+                // to send the orders to the backend, and the user is able to go to the next 
+                // screen before the printing dialog is opened. The problem is that what's 
+                // printed is whatever is in the page when the dialog is opened and not when it's called,
+                // and so you end up printing the product list instead of the receipt... 
+                //
+                // Fixing this would need a re-architecturing
+                // of the code to postpone sending of orders after printing.
+                //
+                // But since the print dialog also blocks the other asynchronous calls, the
+                // button enabling in the setTimeout() is blocked until the printing dialog is 
+                // closed. But the timeout has to be big enough or else it doesn't work
+                // 1 seconds is the same as the default timeout for sending orders and so the dialog
+                // should have appeared before the timeout... so yeah that's not ultra reliable. 
+    
+                this.lock_screen(true);
+    
+                setTimeout(function(){
+                    self.lock_screen(false);
+                }, 5000);
+    
+                this.print_web();
+            } else {    // proxy (html) printing
+                console.log('printing else....');
+                this.print_html();
+                this.lock_screen(false);
+            }
+        },
+        // handlere_auto_print: function() {
+        //     if (this.should_auto_print() && !this.pos.get_order().is_to_email()) {
+        //         //this.print();
+        //         if (this.should_close_immediately()){
+        //             this.click_next();
+        //         }
+        //     } else {
+        //         this.lock_screen(false);
+        //     }
+        // },
     })
 });

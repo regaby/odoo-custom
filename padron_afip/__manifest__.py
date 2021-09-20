@@ -6,7 +6,10 @@
     'license': 'LGPL-3',
     'category': 'Localization/Argentina',
     'website': 'Localizacion arg.',
-    'depends': ['l10n_ar'],
+    'depends': [
+        'l10n_ar',
+        'l10n_ar_ux',
+    ],
     'data': [
         'wizard/res_partner_update_from_padron_wizard_view.xml',
     ],
