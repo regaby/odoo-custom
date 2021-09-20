@@ -1,7 +1,7 @@
 <odoo>
     <data>
 
-       <record id="view_invoice_form_inherit" model="ir.ui.view">
+       <!-- <record id="view_invoice_form_inherit" model="ir.ui.view">
         <field name="name">account.document_invoice.form</field>
         <field name="model">account.invoice</field>
         <field name="inherit_id" ref="account.invoice_form"/>
@@ -13,7 +13,7 @@
                 <field name="manual_number" attrs="{'invisible': [('use_manual_number', '=', False)], 'required': [('use_manual_number', '=', True)], 'readonly': [('state', '!=', 'draft')]}"/>
             </field>
         </field>
-    </record>
+    </record> -->
 
     </data>
 </odoo>

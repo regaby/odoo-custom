@@ -11,12 +11,14 @@
     Por lo tanto, se agrega en el journal un tilde Número manual (manual_number). Luego en la factura si está seteado ese tilde se muestra \
     un campo llamado igual.
     """,
-    'depends': ['account_document'],
+    'depends': [
+        'account'
+        ],
     'data': [
         'views/journal_view.xml',
         'views/invoice_view.xml',
     ],
     'qweb': [
     ],
-    'installable': False,
+    'installable': True,
 }
