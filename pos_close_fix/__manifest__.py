@@ -10,7 +10,7 @@
     "description": """Este modulo salta el control de journal item unbalanced al cerrar sesion del pos:
     Cannot create unbalanced journal entry. Ids:
     Differences debit - credit:""",
-    'depends': ['point_of_sale'],
+    'depends': ['base'],
     'data': [
     ],
     'qweb': [
