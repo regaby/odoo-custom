@@ -5,7 +5,6 @@ from odoo.addons import decimal_precision as dp
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
 
-    @api.multi
     @api.onchange('product_id')
     def product_id_change(self):
         res = super(SaleOrderLine, self).product_id_change()
@@ -15,7 +14,6 @@ class SaleOrderLine(models.Model):
         self.update(vals)
         return res
 
-    @api.multi
     @api.onchange('product_uom_original', 'product_uom_qty_original')
     def uom_original_change(self):
         ## Debo buscar la relacion udm y actualizar campos product_uom y product_uom_qty
@@ -35,7 +33,6 @@ class SaleOrderLine(models.Model):
     product_uom_qty_original = fields.Float(string='Quantity', digits=dp.get_precision('Product Unit of Measure'), required=False, default=1.0)
 
 
-    @api.multi
     def _prepare_invoice_line(self, qty):
         res = super(SaleOrderLine, self)._prepare_invoice_line(qty)
         res['product_uom_original'] = self.product_uom_original.id

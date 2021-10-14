@@ -35,21 +35,21 @@
         </field>
     </record>
 
-    <record id="product_form_view_procurement_button" model="ir.ui.view">
+    <!-- <record id="product_form_view_procurement_button" model="ir.ui.view">
         <field name="model">product.product</field>
         <field name="inherit_id"
                ref="stock.product_form_view_procurement_button"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='qty_available']/.." position="before">
                 <button class="oe_stat_button"
-                       name="%(stock.product_open_quants)d"
+                       name="%(stock.action_open_quants)d"
                        icon="fa-building-o"
                        type="action" attrs="{'invisible':[('type', '!=', 'product')]}">
                     <field name="uom_sale_qty_available" widget="statinfo" string="On Hand"/>
                 </button>
             </xpath>
         </field>
-    </record>
+    </record> -->
 
     </data>
 </odoo>
