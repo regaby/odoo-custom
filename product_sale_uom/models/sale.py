@@ -33,8 +33,8 @@ class SaleOrderLine(models.Model):
     product_uom_qty_original = fields.Float(string='Quantity', digits=dp.get_precision('Product Unit of Measure'), required=False, default=1.0)
 
 
-    def _prepare_invoice_line(self, qty):
-        res = super(SaleOrderLine, self)._prepare_invoice_line(qty)
+    def _prepare_invoice_line(self):
+        res = super(SaleOrderLine, self)._prepare_invoice_line()
         res['product_uom_original'] = self.product_uom_original.id
         res['product_qty_original'] = self.product_uom_qty_original
         return res
