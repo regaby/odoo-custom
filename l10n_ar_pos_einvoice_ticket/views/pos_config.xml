@@ -26,6 +26,19 @@
                         </div>
                     </div>
                 </xpath>
+                <xpath expr="//div[@id='category_reference']" position="after">
+                    <div class="col-12 col-lg-6 o_setting_box" title="Default Cusotmer in POS Order.">
+                        <div class="o_setting_right_pane">
+                            <label for="default_partner_id"/>
+                            <div class="text-muted">
+                                Cliente por defecto.
+                            </div>
+                            <div class="content-group mt16">
+                                <field name="default_partner_id" colspan="4" nolabel="1"/>
+                            </div>
+                        </div>
+                    </div>
+                </xpath>
             </field>
         </record>
 

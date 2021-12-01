@@ -10,5 +10,6 @@ class pos_config(models.Model):
                                       default=1)
     receipt_invoice_number = fields.Boolean('Receipt show invoice number', default=1)
     receipt_customer_vat = fields.Boolean('Receipt show customer VAT', default=1)
+    default_partner_id = fields.Many2one('res.partner', string="Seleccione un cliente")
 
 

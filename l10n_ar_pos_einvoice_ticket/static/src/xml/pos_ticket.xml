@@ -95,16 +95,16 @@
             <hr />
         </xpath>
         <xpath expr="//div[@class='before-footer']" position="after">
-            <t t-if="env.pos.get_order().afip_auth_code and props.order.pos.config.receipt_invoice_number">
+            <t t-if="env.pos.get_order().l10n_ar_afip_auth_code and props.order.pos.config.receipt_invoice_number">
                 <div class="afip-cae-info"  style="text-align: center; font-size: 75%;">
-                    <t t-if="env.pos.get_order().texto_modificado_qr">
+                    <t t-if="env.pos.get_order().l10n_ar_afip_qr_code">
                         <div style="overflow: hidden;">
-                            <img t-attf-src="/report/barcode/?type={{'QR'}}&amp;value={{env.pos.get_order().texto_modificado_qr}}&amp;width={{180}}&amp;height={{180}}" style="width:180px;height:180px" />
+                            <img t-attf-src="/report/barcode/?type={{'QR'}}&amp;value={{env.pos.get_order().l10n_ar_afip_qr_code}}&amp;width={{180}}&amp;height={{180}}" style="width:180px;height:180px" />
                         </div>
                     </t>
-                    <strong>CAE:</strong> <t t-esc="env.pos.get_order().afip_auth_code"/>
+                    <strong>CAE:</strong> <t t-esc="env.pos.get_order().l10n_ar_afip_auth_code"/>
                     <div style="margin-top:3px;">
-                        <strong>Vto. CAE:</strong> <t t-esc="env.pos.get_order().afip_auth_code_due"/>
+                        <strong>Vto. CAE:</strong> <t t-esc="env.pos.get_order().l10n_ar_afip_auth_code_due"/>
                     </div>
                 </div>
             </t>

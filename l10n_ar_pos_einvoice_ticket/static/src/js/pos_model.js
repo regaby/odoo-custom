@@ -14,115 +14,94 @@ odoo.define('l10n_ar_pos_einvoice_ticket', function (require) {
         'country_id',
     ]);
 
+    var pos_model = require("point_of_sale.models");
+    var SuperPosModel = pos_model.PosModel.prototype;
+
     const PaymentScreen = require('point_of_sale.PaymentScreen');
     const { useListener } = require('web.custom_hooks');
     const Registries = require('point_of_sale.Registries');
 
-    const PosInvPaymentScreen = (PaymentScreen) =>
-        class extends PaymentScreen {
-            constructor() {
-                super(...arguments);
+    var _super_Order = models.Order.prototype;
+    models.Order = models.Order.extend({
+
+         renderElement: function() {
+            var self = this;
+            this._super();
+
+            if (this.pos.config.pos_auto_invoice) {
+               this.$('.js_invoice').addClass('oe_hidden');
             }
+        },
 
-            async _finalizeValidation() {
-                var self = this;
-                if (this.currentOrder.is_paid_with_cash() && this.env.pos.config.iface_cashdrawer) {
-                    this.env.pos.proxy.printer.open_cashbox();
-                }
-                var domain = [['pos_reference', '=', this.currentOrder['name']]]
-                var fields = ['account_move'];
 
-                this.currentOrder.initialize_validation_date();
-                this.currentOrder.finalized = true;
+        initialize: function (attributes, options) {
+            _super_Order.initialize.apply(this, arguments);
+            if (this.pos.config.pos_auto_invoice) {
+                this.to_invoice = true;
+            }
+            if (this.pos.config.default_partner_id) {
+            	this.set_client(this.pos.db.get_partner_by_id(this.pos.config.default_partner_id[0]));
+            }
+        },
+        init_from_JSON: function (json) {
+            var res = _super_Order.init_from_JSON.apply(this, arguments);
+            if (json.to_invoice) {
+                this.to_invoice = json.to_invoice;
 
-                let syncedOrderBackendIds = [];
+            }
+        }
+    });
 
-                try {
-                    if (this.currentOrder.is_to_invoice()) {
-                        syncedOrderBackendIds = await this.env.pos.push_and_invoice_order(
-                            this.currentOrder
-                        );
-                    } else {
-                        syncedOrderBackendIds = await this.env.pos.push_single_order(this.currentOrder);
-                    }
-                } catch (error) {
-                    if (error instanceof Error) {
-                        throw error;
-                    } else {
-                        await this._handlePushOrderError(error);
-                    }
-                }
-                if (syncedOrderBackendIds.length && this.currentOrder.wait_for_push_order()) {
-                    const result = await this._postPushOrderResolve(
-                        this.currentOrder,
-                        syncedOrderBackendIds
-                    );
-                    if (!result) {
-                        await this.showPopup('ErrorPopup', {
-                            title: 'Error: no internet connection.',
-                            body: error,
-                        });
-                    }
-                }
-                if (this.currentOrder.is_to_invoice()) {
-                    this.rpc({
+    pos_model.PosModel = pos_model.PosModel.extend({
+
+        _flush_orders: function(orders, options) {
+
+            var self = this;
+            var result, data;
+            result = data = SuperPosModel._flush_orders.call(this,orders, options)
+            _.each(orders,function(order){
+                if (order.to_invoice)
+                var order = self.env.pos.get_order();
+                data.then(function(order_server_id){
+                    var domain = [['pos_reference', '=', order['name']]]
+                    var fields = ['account_move'];
+
+
+                    rpc.query({
                         model: 'pos.order',
                         method: 'search_read',
                         args: [domain, fields],
-                    })
-                    .then(function (output) {
+                    }).then(function(output){
                         var invoice_number = output[0]['account_move'][1].split(" ")[1];
                         var invoice_letter = output[0]['account_move'][1].split(" ")[0].substring(3, 4);
-                        self.currentOrder.invoice_number = invoice_number;
-                        self.currentOrder.invoice_letter = invoice_letter;
+                        self.get_order().invoice_number = invoice_number;
+                        self.get_order().invoice_letter = invoice_letter;
                         var account_move = output[0]['account_move'][0]
                         rpc.query({
                             model: 'account.move',
                             method: 'search_read',
-                            args: [[['id', '=', account_move]], ['afip_auth_code',
-                                                               'afip_auth_code_due',
-                                                               'texto_modificado_qr',
+                            args: [[['id', '=', account_move]], ['l10n_ar_afip_auth_code',
+                                                               'l10n_ar_afip_auth_code_due',
+                                                               'l10n_ar_afip_qr_code',
                                                                'l10n_latam_document_type_id',
                                                                ]],
                            }
 
                         ).then(function (invoices) {
-                            self.currentOrder.texto_modificado_qr = invoices[0]['texto_modificado_qr'];
-                            self.currentOrder.afip_auth_code = invoices[0]['afip_auth_code'];
-                            self.currentOrder.afip_auth_code_due = invoices[0]['afip_auth_code_due'];
-                            self.currentOrder.l10n_latam_document_type_id = invoices[0]['l10n_latam_document_type_id'][1].split(" ")[0];
-                            self.showScreen(self.nextScreen);
+                            self.get_order().l10n_ar_afip_qr_code = invoices[0]['l10n_ar_afip_qr_code'];
+                            self.get_order().l10n_ar_afip_auth_code = invoices[0]['l10n_ar_afip_auth_code'];
+                            self.get_order().l10n_ar_afip_auth_code_due = invoices[0]['l10n_ar_afip_auth_code_due'];
+                            self.get_order().l10n_latam_document_type_id = invoices[0]['l10n_latam_document_type_id'][1].split(" ")[0];
                         });
-
-
+                    }).catch(function(error){
+                        return result
                     })
-                }
-                else{
-                    this.showScreen(this.nextScreen);
-                }
+                })
+            })
+            return result
 
-                // If we succeeded in syncing the current order, and
-                // there are still other orders that are left unsynced,
-                // we ask the user if he is willing to wait and sync them.
-                if (syncedOrderBackendIds.length && this.env.pos.db.get_orders().length) {
-                    const { confirmed } = await this.showPopup('ConfirmPopup', {
-                        title: this.env._t('Remaining unsynced orders'),
-                        body: this.env._t(
-                            'There are unsynced orders. Do you want to sync these orders?'
-                        ),
-                    });
-                    if (confirmed) {
-                        // NOTE: Not yet sure if this should be awaited or not.
-                        // If awaited, some operations like changing screen
-                        // might not work.
-                        this.env.pos.push_orders();
-                    }
-                }
-            }
-        };
+        },
 
-    Registries.Component.extend(PaymentScreen, PosInvPaymentScreen);
-
-    return PosInvPaymentScreen;
+    })
 
 });
