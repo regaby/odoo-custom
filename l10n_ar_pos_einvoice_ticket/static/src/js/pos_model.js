@@ -82,13 +82,13 @@ odoo.define('l10n_ar_pos_einvoice_ticket', function (require) {
                             method: 'search_read',
                             args: [[['id', '=', account_move]], ['afip_auth_code',
                                                                  'afip_auth_code_due',
-                                                                 'texto_modificado_qr',
+                                                                 'afip_qr_code',
                                                                  'l10n_latam_document_type_id',
                                                                 ]],
                            }
 
                         ).then(function (invoices) {
-                            self.get_order().texto_modificado_qr = invoices[0]['texto_modificado_qr'];
+                            self.get_order().afip_qr_code = invoices[0]['afip_qr_code'];
                             self.get_order().afip_auth_code = invoices[0]['afip_auth_code'];
                             self.get_order().afip_auth_code_due = invoices[0]['afip_auth_code_due'];
                             self.get_order().l10n_latam_document_type_id = invoices[0]['l10n_latam_document_type_id'][1].split(" ")[0];
