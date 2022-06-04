@@ -9,13 +9,20 @@
     'depends': [
         'point_of_sale',
         'l10n_ar',
+        'l10n_ar_fe_qr',
     ],
     'data': [
-        'views/pos_einvoice_ar.xml',
         'views/pos_config.xml',
     ],
-    'qweb': [
-        'static/src/xml/pos_ticket.xml',
-    ],
+    'assets': {
+        "point_of_sale.assets": [
+            "/l10n_ar_pos_einvoice_ticket/static/src/js/pos_model.js",
+            "/l10n_ar_pos_einvoice_ticket/static/src/css/pos_receipts.css",
+        ],
+        'web.assets_qweb': [
+             'l10n_ar_pos_einvoice_ticket/static/src/xml/pos_ticket.xml',
+        ],
+
+    },
     'installable': True,
 }

@@ -3,6 +3,7 @@
     <t t-name="OrderReceipt" t-inherit="point_of_sale.OrderReceipt" t-inherit-mode="extension" owl="1">
         <xpath expr="//t[@t-if='receipt.company.vat']" position="replace">
             <div class="afip-info">
+                <t t-if='env.pos.get_order().invoice_number'>
                     <div>CUIT: <t t-esc="receipt.company.vat"/></div>
                     <div>Ing. Brutos: <t t-esc="env.pos.get_order().pos.company.l10n_ar_gross_income_number"/></div>
                     <div>Inicio de actividades: <t t-esc="env.pos.get_order().pos.company.l10n_ar_afip_start_date"/></div>
@@ -18,7 +19,7 @@
                         , <t t-esc="env.pos.get_order().pos.company.country_id[1]"/>
                     </t>
                     </div>
-                <!--/t-->
+                </t>
             </div>
         </xpath>
         <xpath expr="//t[@t-if='receipt.cashier']" position="replace">
@@ -26,7 +27,7 @@
                 <div class="afip-invoice-info" >
                     <hr />
                     <strong>
-                    FACTURA <t t-esc="env.pos.get_order().invoice_letter"/> - ORIGINAL
+                    <t t-esc="env.pos.get_order().l10n_latam_document_name"/> - ORIGINAL
                         <t t-if="env.pos.get_order().invoice_letter == 'A'">
                             - COD <t t-esc="env.pos.get_order().l10n_latam_document_type_id"/>
                         </t>
@@ -40,14 +41,16 @@
             <t t-if='receipt.client and props.order.pos.config.receipt_customer_vat'>
                 <div class="afip-client-info" >
                     <div>CLIENTE: <t t-esc='receipt.client.name' /></div>
-                    <t t-if="receipt.client.l10n_latam_identification_type_id">
-                        <t t-esc='receipt.client.l10n_latam_identification_type_id[1]' />:
-                    </t>
-                    <t t-if="receipt.client.vat">
-                        <t t-esc='receipt.client.vat' />
-                    </t>
-                    <t t-if="receipt.client.l10n_ar_afip_responsibility_type_id">
-                        <div><t t-esc='receipt.client.l10n_ar_afip_responsibility_type_id[1]' /></div>
+                    <t t-if='env.pos.get_order().invoice_number'>
+                        <t t-if="receipt.client.l10n_latam_identification_type_id">
+                            <t t-esc='receipt.client.l10n_latam_identification_type_id[1]' />:
+                        </t>
+                        <t t-if="receipt.client.vat">
+                            <t t-esc='receipt.client.vat' />
+                        </t>
+                        <t t-if="receipt.client.l10n_ar_afip_responsibility_type_id">
+                            <div><t t-esc='receipt.client.l10n_ar_afip_responsibility_type_id[1]' /></div>
+                        </t>
                     </t>
                     <t t-if="receipt.client.street">
                         <div>
@@ -71,9 +74,6 @@
                         <t t-if="receipt.client.website">
                             <div>Website: <t t-esc="receipt.client.website"/></div>
                         </t>
-                        <!--t t-esc="props.order.pos.config.pos_auto_invoice"/>
-                        <t t-esc="props.order.pos.config.receipt_invoice_number"/>
-                        <t t-esc="props.order.pos.config.receipt_customer_vat"/-->
                     </t>
                 </div>
             </t>
@@ -86,25 +86,26 @@
             <hr />
                 <strong>
                 <div>DESCRIPCIÓN</div>
-                <div>CANT. x PRECIO UNIT.
-                	&#160;&#160;&#160;&#160;&#160;&#160;&#160;
-                	&#160;&#160;&#160;&#160;&#160;&#160;&#160;
-                	&#160;&#160;&#160;&#160;&#160;&#160;&#160;
-                	IMPORTE</div>
+                <div >
+                    CANT. x PRECIO UNIT.
+                    <span class="price_display pos-receipt-right-align">
+                    IMPORTE
+                    </span>
+                </div>
                 </strong>
             <hr />
         </xpath>
         <xpath expr="//div[@class='before-footer']" position="after">
-            <t t-if="env.pos.get_order().l10n_ar_afip_auth_code and props.order.pos.config.receipt_invoice_number">
+            <t t-if="env.pos.get_order().afip_auth_code and props.order.pos.config.receipt_invoice_number">
                 <div class="afip-cae-info"  style="text-align: center; font-size: 75%;">
-                    <t t-if="env.pos.get_order().l10n_ar_afip_qr_code">
+                    <t t-if="env.pos.get_order().texto_modificado_qr">
                         <div style="overflow: hidden;">
-                            <img t-attf-src="/report/barcode/?type={{'QR'}}&amp;value={{env.pos.get_order().l10n_ar_afip_qr_code}}&amp;width={{180}}&amp;height={{180}}" style="width:180px;height:180px" />
+                            <img t-attf-src="/report/barcode/?type={{'QR'}}&amp;value={{env.pos.get_order().texto_modificado_qr}}&amp;width={{180}}&amp;height={{180}}" style="width:180px;height:180px" />
                         </div>
                     </t>
-                    <strong>CAE:</strong> <t t-esc="env.pos.get_order().l10n_ar_afip_auth_code"/>
+                    <strong>CAE:</strong> <t t-esc="env.pos.get_order().afip_auth_code"/>
                     <div style="margin-top:3px;">
-                        <strong>Vto. CAE:</strong> <t t-esc="env.pos.get_order().l10n_ar_afip_auth_code_due"/>
+                        <strong>Vto. CAE:</strong> <t t-esc="env.pos.get_order().afip_auth_code_due"/>
                     </div>
                 </div>
             </t>

@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
 from odoo import api, fields, models, _
+import stdnum.ar
+from odoo.exceptions import ValidationError
+import logging
+_logger = logging.getLogger(__name__)
 
 class ResPartner(models.Model):
     _inherit = "res.partner"
@@ -17,4 +21,37 @@ class ResPartner(models.Model):
         l10n_ar_partners = self.filtered(lambda self: self.env['l10n_latam.identification.type'].browse(type_id).l10n_ar_afip_code)
         l10n_ar_partners.l10n_ar_identification_validation()
         return super(ResPartner, self - l10n_ar_partners).check_vat()
+
+    def _get_validation_module(self):
+        self.ensure_one()
+        type_id = int(self.l10n_latam_identification_type_id.id)
+        l10n_latam_identification_type_id = self.env['l10n_latam.identification.type'].browse(type_id)
+        if l10n_latam_identification_type_id.l10n_ar_afip_code in ['80', '86']:
+            return stdnum.ar.cuit
+        elif l10n_latam_identification_type_id.l10n_ar_afip_code == '96':
+            return stdnum.ar.dni
+
+    def l10n_ar_identification_validation(self):
+        type_id = int(self.l10n_latam_identification_type_id.id)
+        l10n_latam_identification_type_id = self.env['l10n_latam.identification.type'].browse(type_id)
+        for rec in self.filtered('vat'):
+            try:
+                module = rec._get_validation_module()
+            except Exception as error:
+                module = False
+                _logger.runbot("Argentinean document was not validated: %s", repr(error))
+            if not module:
+                continue
+            try:
+                module.validate(rec.vat)
+
+            except module.InvalidChecksum:
+                raise ValidationError(_('The validation digit is not valid for "%s"',
+                                        l10n_latam_identification_type_id.name))
+            except module.InvalidLength:
+                raise ValidationError(_('Invalid length for "%s"', l10n_latam_identification_type_id.name))
+            except module.InvalidFormat:
+                raise ValidationError(_('Only numbers allowed for "%s"', l10n_latam_identification_type_id.name))
+            except Exception as error:
+                raise ValidationError(repr(error))
 
