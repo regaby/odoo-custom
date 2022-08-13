@@ -3,7 +3,11 @@ odoo.define('website_event_code.website_event_code', function (require) {
 
     var EventRegistrationForm = require('website_event.website_event');
     var ajax = require('web.ajax');
+    var core = require('web.core');
+    var Widget = require('web.Widget');
+    var publicWidget = require('web.public.widget');
 
+var _t = core._t;
     EventRegistrationForm.include({
         on_click: function (ev) {
             console.log('on_click')

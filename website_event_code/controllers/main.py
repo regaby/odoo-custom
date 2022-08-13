@@ -14,7 +14,7 @@ class WebsiteEventController(WebsiteEventController):
 
     @http.route(['/event/<model("event.event"):event>/registration/new'], type='json', auth="public", methods=['POST'], website=True)
     def registration_new(self, event, **post):
-        event_code = post['event_code']
+        event_code = post['event_code'].upper()
         event_id = request.env['event.code'].sudo().search([
             ('event_code', '=', event_code),
             ('event_id', '=', event.id),
@@ -34,7 +34,7 @@ class WebsiteEventController(WebsiteEventController):
                 return res
 
     def _process_tickets_form(self, event, form_details):
-        event_code = form_details['event_code']
+        event_code = form_details['event_code'].upper()
         event_draft_id = request.env['event.code'].sudo().search([
             ('event_code', '=', event_code),
             ('event_id', '=', event.id),
@@ -48,7 +48,7 @@ class WebsiteEventController(WebsiteEventController):
     @http.route(['''/event/<model("event.event"):event>/registration/confirm'''], type='http', auth="public", methods=['POST'], website=True)
     def registration_confirm(self, event, **post):
         event_draft_id = request.env['event.code'].sudo().search([
-            ('event_code', '=', post['1-event_code']),
+            ('event_code', '=', post['1-event_code'].upper()),
             ('event_id', '=', event.id),
             ('state', '=', 'draft'),
         ])
