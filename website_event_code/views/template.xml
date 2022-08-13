@@ -1,0 +1,82 @@
+<odoo>
+    <data>
+        <template id="registration_template_inherit_event_code" inherit_id="website_event.registration_template" >
+            <xpath expr="//div[hasclass('o_wevent_registration_single')]" position="replace">
+                <div t-else="" class="o_wevent_registration_single">
+                    <div class="row p-2 pl-3">
+                        <div class="col-lg-8 d-flex flex-columns align-items-center" itemscope="itemscope" itemtype="http://schema.org/Offer">
+                            <h6 itemprop="name" class="my-0 pr-3 border-right text-dark o_wevent_single_ticket_name">
+                                <span t-if="tickets" t-field="tickets.name"/>
+                                <span t-else="">Registration</span>
+                            </h6>
+                            <small t-if="tickets.end_sale_datetime and tickets.sale_available and not tickets.is_expired" class="text-muted mr-3" itemprop="availabilityEnds">Sales end on
+                                <span itemprop="priceValidUntil" t-esc="tickets.end_sale_datetime"
+                                    t-options="{'widget': 'datetime', 'tz_name': event.date_tz, 'format': 'short'}"/>
+                                <span t-esc="tickets.event_id.date_tz"/>
+                            </small>
+                            <div class="ml-auto o_wevent_nowrap">
+                                <span class="text-dark font-weight-bold align-middle px-2">Código de Invitación</span>
+                                <!-- <label for="event_code" class="form-label">Código de invitación</label> -->
+                                <link itemprop="availability" content="http://schema.org/InStock"/>
+                                <input type="text" name="event_code"  minlength="6" maxlength="6" class="w-auto" required="Complete este campo" />
+                                <select t-att-name="'nb_register-%s' % (tickets.id if tickets else 0)" class="w-auto custom-select" style="visibility:hidden" >
+                                    <t t-set="seats_max_ticket" t-value="(not tickets or not tickets.seats_limited or tickets.seats_available &gt; 9) and 10 or tickets.seats_available + 1"/>
+                                    <t t-set="seats_max_event" t-value="(not event.seats_limited or event.seats_available &gt; 9) and 10 or event.seats_available + 1"/>
+                                    <t t-set="seats_max" t-value="min(seats_max_ticket, seats_max_event) if tickets else seats_max_event"/>
+                                    <t t-foreach="range(0, seats_max)" t-as="nb">
+                                        <option t-esc="nb" t-att-selected="nb == 1 and 'selected'"/>
+                                    </t>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 pt-3 pt-lg-0 pl-2 pl-lg-0">
+                            <button type="submit" class="btn btn-primary o_wait_lazy_js btn-block a-submit" t-attf-id="#{event.id}">
+                                Register
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </template>
+
+        <template id="registration_attendee_details_inherit_event_code" inherit_id="website_event.registration_attendee_details" >
+            <xpath expr="//div[hasclass('row')]/input" position="after">
+                <t t-foreach="tickets" t-as="ticket" t-if="availability_check">
+                    <input class="d-none" type="text" t-attf-name="1-event_code" t-attf-value="#{ticket['event_code']}"/>
+                </t>
+            </xpath>
+        </template>
+
+        <template id="event_code_not_found" name="Event Code not found">
+            <div id="modal_attendees_registration" class="modal fade" tabindex="-1" role="dialog">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header align-items-center">
+                            <h4 class="modal-title">Codigo no existente</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span>×</span></button>
+                        </div>
+                        <div class="modal-footer border-0 justify-content-between">
+                            <button type="button" class="btn btn-primary js_goto_event" data-dismiss="modal">Ok</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
+
+        <template id="event_code_used" name="Event Code Used">
+            <div id="modal_attendees_registration" class="modal fade" tabindex="-1" role="dialog">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header align-items-center">
+                            <h4 class="modal-title">Codigo Usado</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span>×</span></button>
+                        </div>
+                        <div class="modal-footer border-0 justify-content-between">
+                            <button type="button" class="btn btn-primary js_goto_event" data-dismiss="modal">Ok</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
+    </data>
+</odoo>
