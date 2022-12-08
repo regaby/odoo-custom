@@ -113,64 +113,66 @@
         <xpath expr="//div[@class='orderlines']" position="replace">
             <div class="orderlines">
                 <t t-foreach="receipt.orderlines" t-as="line" t-key="line.id">
-                    <t t-if="isSimple(line)">
-                        <div>
-                            <t t-esc="line.product_name_wrapped[0]" />
-                            <span t-esc="env.pos.format_currency_no_symbol(line.price_display)" class="price_display pos-receipt-right-align"/>
-                        </div>
-                        <WrappedProductNameLines line="line" />
-                    </t>
-                    <t t-else="">
-                        <div t-esc="line.product_name_wrapped[0]" />
-                        <WrappedProductNameLines line="line" />
-                        <t t-if="line.display_discount_policy == 'without_discount' and line.price != line.price_lst">
-                            <div class="pos-receipt-left-padding">
-                                <t t-esc="env.pos.format_currency_no_symbol(line.price_lst)" />
-                                ->
-                                <t t-esc="env.pos.format_currency_no_symbol(line.price)" />
+                    <t t-if="line.price != 0">
+                        <t t-if="isSimple(line)">
+                            <div>
+                                <t t-esc="line.product_name_wrapped[0]" />
+                                <span t-esc="env.pos.format_currency_no_symbol(line.price_display)" class="price_display pos-receipt-right-align"/>
                             </div>
+                            <WrappedProductNameLines line="line" />
                         </t>
-                        <t t-elif="line.discount !== 0">
-                            <div class="pos-receipt-left-padding">
-                                <t t-if="env.pos.config.iface_tax_included === 'total'">
-                                    <t t-esc="env.pos.format_currency_no_symbol(line.price_with_tax_before_discount)"/>
-                                </t>
-                                <t t-else="">
-                                    <t t-esc="env.pos.format_currency_no_symbol(line.price)"/>
-                                </t>
-                            </div>
-                        </t>
-                        <t t-if="line.discount !== 0">
-                            <div class="pos-receipt-left-padding">
-                                Discount: <t t-esc="line.discount" />%
-                            </div>
-                        </t>
-                        <div class="pos-receipt-left-padding">
-                            <t t-esc="Math.round(line.quantity * Math.pow(10, env.pos.dp['Product Unit of Measure'])) / Math.pow(10, env.pos.dp['Product Unit of Measure'])"/>
-                            <t t-if="line.unit_name !== 'Units'" t-esc="line.unit_name" />
-                            x
-                            <!--t t-esc="env.pos.format_currency_no_symbol(line.price_display_one)" /-->
-                            <t t-if="env.pos.get_order().invoice_letter == 'A'">
-                                <!-- Precio unitario sin iva -->
-                                <t t-esc='env.pos.format_currency_no_symbol(line.price_without_tax / line.quantity)' />
+                        <t t-else="">
+                            <div t-esc="line.product_name_wrapped[0]" />
+                            <WrappedProductNameLines line="line" />
+                            <t t-if="line.display_discount_policy == 'without_discount' and line.price != line.price_lst">
+                                <div class="pos-receipt-left-padding">
+                                    <t t-esc="env.pos.format_currency_no_symbol(line.price_lst)" />
+                                    ->
+                                    <t t-esc="env.pos.format_currency_no_symbol(line.price)" />
+                                </div>
                             </t>
-                            <t t-if="env.pos.get_order().invoice_letter !== 'A'">
-                                <!-- Como no tengo Precio unitario con iva, hago el subtotal dividido la cant. de productos -->
-                                <t t-esc='env.pos.format_currency_no_symbol(line.price_with_tax / line.quantity)'/>
+                            <t t-elif="line.discount !== 0">
+                                <div class="pos-receipt-left-padding">
+                                    <t t-if="env.pos.config.iface_tax_included === 'total'">
+                                        <t t-esc="env.pos.format_currency_no_symbol(line.price_with_tax_before_discount)"/>
+                                    </t>
+                                    <t t-else="">
+                                        <t t-esc="env.pos.format_currency_no_symbol(line.price)"/>
+                                    </t>
+                                </div>
                             </t>
-
-                            <span class="price_display pos-receipt-right-align">
-                                <!--t t-esc="env.pos.format_currency_no_symbol(line.price_display)" /-->
+                            <t t-if="line.discount !== 0">
+                                <div class="pos-receipt-left-padding">
+                                    Discount: <t t-esc="line.discount" />%
+                                </div>
+                            </t>
+                            <div class="pos-receipt-left-padding">
+                                <t t-esc="Math.round(line.quantity * Math.pow(10, env.pos.dp['Product Unit of Measure'])) / Math.pow(10, env.pos.dp['Product Unit of Measure'])"/>
+                                <t t-if="line.unit_name !== 'Units'" t-esc="line.unit_name" />
+                                x
+                                <!--t t-esc="env.pos.format_currency_no_symbol(line.price_display_one)" /-->
                                 <t t-if="env.pos.get_order().invoice_letter == 'A'">
-                                    <!-- subtotal de producto sin iva -->
-                                    <t t-esc='env.pos.format_currency_no_symbol(line.price_without_tax)'/>
+                                    <!-- Precio unitario sin iva -->
+                                    <t t-esc='env.pos.format_currency_no_symbol(line.price_without_tax / line.quantity)' />
                                 </t>
                                 <t t-if="env.pos.get_order().invoice_letter !== 'A'">
-                                    <!-- subtotal de producto con iva -->
-                                    <t t-esc='env.pos.format_currency_no_symbol(line.price_with_tax)'/>
+                                    <!-- Como no tengo Precio unitario con iva, hago el subtotal dividido la cant. de productos -->
+                                    <t t-esc='env.pos.format_currency_no_symbol(line.price_with_tax / line.quantity)'/>
                                 </t>
-                            </span>
-                        </div>
+
+                                <span class="price_display pos-receipt-right-align">
+                                    <!--t t-esc="env.pos.format_currency_no_symbol(line.price_display)" /-->
+                                    <t t-if="env.pos.get_order().invoice_letter == 'A'">
+                                        <!-- subtotal de producto sin iva -->
+                                        <t t-esc='env.pos.format_currency_no_symbol(line.price_without_tax)'/>
+                                    </t>
+                                    <t t-if="env.pos.get_order().invoice_letter !== 'A'">
+                                        <!-- subtotal de producto con iva -->
+                                        <t t-esc='env.pos.format_currency_no_symbol(line.price_with_tax)'/>
+                                    </t>
+                                </span>
+                            </div>
+                        </t>
                     </t>
                 </t>
                 <t t-set='imp_inclu' t-value='Math.abs(receipt.subtotal - receipt.total_with_tax) &lt;= 0.000001' />
