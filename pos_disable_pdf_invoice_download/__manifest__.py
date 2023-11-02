@@ -7,12 +7,18 @@
     'category': 'Point Of Sale',
     'website': 'www.galup.com.ar',
     'summary': 'This module allows optional invoice printing from POS',
-    'depends': ['point_of_sale'],
+    'depends': [
+        'point_of_sale'
+    ],
     'data': [
-        'views/pos_disable_download.xml',
         'views/pos_config.xml',
     ],
+    'assets': {
+        "point_of_sale.assets": [
+            '/pos_disable_pdf_invoice_download/static/src/js/pos_download_invoice.js',
+        ],
+    },
     'qweb': [
     ],
-    'installable': False,
+    'installable': True,
 }

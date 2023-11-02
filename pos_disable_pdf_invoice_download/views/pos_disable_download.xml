@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<odoo>
-    <template id="assets_backend" name="pos_disable_pdf_invoice_download" inherit_id="point_of_sale.assets">
-        <xpath expr="." position="inside">
-            <script type="text/javascript" src="/pos_disable_pdf_invoice_download/static/src/js/pos.js"></script>
-        </xpath>
-    </template>
-</odoo>
-
