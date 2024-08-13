@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
-from odoo import api, fields, models, _
 
-class pos_config(models.Model):
-	# Heredamos la clase CONFIGURACIÓN DEL POS"
-    _inherit = "pos.config"
+from odoo import api, models, fields, _
+from odoo.exceptions import ValidationError
 
-    pos_auto_invoice = fields.Boolean(
+class ResCompany(models.Model):
+    _inherit = 'res.company'
+
+    auto_invoice = fields.Boolean(
         'POS auto invoice',
         help='POS auto to checked to invoice button',
         default=True
@@ -18,9 +19,3 @@ class pos_config(models.Model):
         'Receipt show customer VAT',
         default=True
     )
-    default_partner_id = fields.Many2one(
-        'res.partner',
-        string="Seleccione un cliente",
-    )
-
-

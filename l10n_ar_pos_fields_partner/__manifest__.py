@@ -17,5 +17,5 @@
         ],
 
     },
-    'installable': True,
+    'installable': False,
 }
