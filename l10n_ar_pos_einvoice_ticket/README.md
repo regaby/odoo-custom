@@ -21,6 +21,10 @@ En la configuración del terminal de punto de venta se agregaron las siguientes 
 
 Cuando se genere el ticket/factura, se mostrarán todos los datos necesarios según legislación vigente.
 
+En la versión 17.0 probado con la localización de a2systems https://github.com/a2systems/odoo-argentina
+
+Si te sirvió este módulo ---> https://cafecito.app/regaby
+
 .. image:: l10n_ar_pos_einvoice_ticket/static/description/ticket.png
 
 
