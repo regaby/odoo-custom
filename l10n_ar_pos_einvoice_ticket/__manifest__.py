@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'POS einvoice ticket',
-    'version': '0.1',
+    'version': '17.0.0.1.0',
     'author': 'Ing. Gabriela Rivero',
     'license': 'LGPL-3',
     'category': 'Point Of Sale',
