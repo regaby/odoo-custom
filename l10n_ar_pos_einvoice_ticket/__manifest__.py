@@ -9,7 +9,6 @@
     'depends': [
         'point_of_sale',
         'l10n_ar',
-        'l10n_ar_fe_qr',
     ],
     'data': [
         'views/res_config_settings.xml',
