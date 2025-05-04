@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="OrderReceipt" t-inherit="point_of_sale.OrderReceipt" t-inherit-mode="extension" owl="1">
+        <xpath expr="//t[@t-if='receipt.company.vat']" position="replace">
+            <div class="afip-info">
+                <t t-if='env.pos.get_order().invoice_number'>
+                    <div>CUIT: <t t-esc="receipt.company.vat"/></div>
+                    <div>Ing. Brutos: <t t-esc="env.pos.get_order().pos.company.l10n_ar_gross_income_number"/></div>
+                    <div>Inicio de actividades: <t t-esc="env.pos.get_order().pos.company.l10n_ar_afip_start_date"/></div>
+                    <div><t t-esc="env.pos.get_order().pos.company.l10n_ar_afip_responsibility_type_id[1]"/></div>
+                    <div>Dirección: <t t-esc="env.pos.get_order().pos.company.street"/>
+                    <t t-if="env.pos.get_order().pos.company.city">
+                        , <t t-esc="env.pos.get_order().pos.company.city"/>
+                    </t>
+                    <t t-if="env.pos.get_order().pos.company.state_id">
+                        , <t t-esc="env.pos.get_order().pos.company.state_id[1]"/>
+                    </t>
+                    <t t-if="env.pos.get_order().pos.company.country_id">
+                        , <t t-esc="env.pos.get_order().pos.company.country_id[1]"/>
+                    </t>
+                    </div>
+                </t>
+            </div>
+        </xpath>
+        <xpath expr="//t[@t-if='receipt.cashier']" position="replace">
+            <t t-if='env.pos.get_order().invoice_number and props.order.pos.config.receipt_invoice_number'>
+                <div class="afip-invoice-info" >
+                    <hr />
+                    <strong>
+                    <t t-esc="env.pos.get_order().l10n_latam_document_name"/> - ORIGINAL
+                        <t t-if="env.pos.get_order().invoice_letter == 'A'">
+                            - COD <t t-esc="env.pos.get_order().l10n_latam_document_type_id"/>
+                        </t>
+                        <br />
+                    N° DE FACTURA: <t t-esc="env.pos.get_order().invoice_number"/><br />
+                    FECHA: <t t-esc="receipt.date.localestring"/></strong>
+                    <br />
+                    <hr />
+                </div>
+            </t>
+            <t t-if='receipt.client and props.order.pos.config.receipt_customer_vat'>
+                <div class="afip-client-info" >
+                    <div>CLIENTE: <t t-esc='receipt.client.name' /></div>
+                    <t t-if='env.pos.get_order().invoice_number'>
+                        <t t-if="receipt.client.l10n_latam_identification_type_id">
+                            <t t-esc='receipt.client.l10n_latam_identification_type_id[1]' />:
+                        </t>
+                        <t t-if="receipt.client.vat">
+                            <t t-esc='receipt.client.vat' />
+                        </t>
+                        <t t-if="receipt.client.l10n_ar_afip_responsibility_type_id">
+                            <div><t t-esc='receipt.client.l10n_ar_afip_responsibility_type_id[1]' /></div>
+                        </t>
+                    </t>
+                    <t t-if="receipt.client.street">
+                        <div>
+                            CALLE: <t t-esc="receipt.client.street"/>
+                            <t t-if="receipt.client.city">
+                                , <t t-esc="receipt.client.city"/>
+                            </t>
+                            <t t-if="receipt.client.state_id">
+                                , <t t-esc="receipt.client.state_id[1]"/>
+                            </t>
+                            <t t-if="receipt.client.country_id">
+                                , <t t-esc="receipt.client.country_id[1]"/>
+                            </t>
+                        </div>
+                        <t t-if="receipt.client.email">
+                            <div>Email: <t t-esc="receipt.client.email"/></div>
+                        </t>
+                        <t t-if="receipt.client.phone or receipt.client.mobile">
+                            <div>Tel: <t t-esc="receipt.client.phone || receipt.client.mobile"/></div>
+                        </t>
+                        <t t-if="receipt.client.website">
+                            <div>Website: <t t-esc="receipt.client.website"/></div>
+                        </t>
+                    </t>
+                </div>
+            </t>
+            <t t-if='receipt.cashier'>
+                <div class='cashier'>
+                    <hr />
+                    <div>Servido por <t t-esc='receipt.cashier' /></div>
+                </div>
+            </t>
+            <hr />
+                <strong>
+                <div>DESCRIPCIÓN</div>
+                <div >
+                    CANT. x PRECIO UNIT.
+                    <span class="price_display pos-receipt-right-align">
+                    IMPORTE
+                    </span>
+                </div>
+                </strong>
+            <hr />
+        </xpath>
+        <xpath expr="//div[@class='before-footer']" position="after">
+            <t t-if="env.pos.get_order().l10n_ar_afip_auth_code and props.order.pos.config.receipt_invoice_number">
+                <div class="afip-cae-info"  style="text-align: center; font-size: 75%;">
+                    <t t-if="env.pos.get_order().l10n_ar_afip_qr_code">
+                        <div style="overflow: hidden;">
+                            <img t-attf-src="/report/barcode/?type={{'QR'}}&amp;value={{env.pos.get_order().l10n_ar_afip_qr_code}}&amp;width={{180}}&amp;height={{180}}" style="width:180px;height:180px" />
+                        </div>
+                    </t>
+                    <strong>CAE:</strong> <t t-esc="env.pos.get_order().l10n_ar_afip_auth_code"/>
+                    <div style="margin-top:3px;">
+                        <strong>Vto. CAE:</strong> <t t-esc="env.pos.get_order().l10n_ar_afip_auth_code_due"/>
+                    </div>
+                </div>
+            </t>
+        </xpath>
+        <xpath expr="//div[@class='orderlines']" position="replace">
+            <div class="orderlines">
+                <t t-foreach="receipt.orderlines" t-as="line" t-key="line.id">
+                    <t t-if="line.price != 0">
+                        <t t-if="isSimple(line)">
+                            <div>
+                                <t t-esc="line.product_name_wrapped[0]" />
+                                <span t-esc="env.pos.format_currency_no_symbol(line.price_display)" class="price_display pos-receipt-right-align"/>
+                            </div>
+                            <WrappedProductNameLines line="line" />
+                        </t>
+                        <t t-else="">
+                            <div t-esc="line.product_name_wrapped[0]" />
+                            <WrappedProductNameLines line="line" />
+                            <t t-if="line.display_discount_policy == 'without_discount' and line.price != line.price_lst">
+                                <div class="pos-receipt-left-padding">
+                                    <t t-esc="env.pos.format_currency_no_symbol(line.price_lst)" />
+                                    ->
+                                    <t t-esc="env.pos.format_currency_no_symbol(line.price)" />
+                                </div>
+                            </t>
+                            <t t-elif="line.discount !== 0">
+                                <div class="pos-receipt-left-padding">
+                                    <t t-if="env.pos.config.iface_tax_included === 'total'">
+                                        <t t-esc="env.pos.format_currency_no_symbol(line.price_with_tax_before_discount)"/>
+                                    </t>
+                                    <t t-else="">
+                                        <t t-esc="env.pos.format_currency_no_symbol(line.price)"/>
+                                    </t>
+                                </div>
+                            </t>
+                            <t t-if="line.discount !== 0">
+                                <div class="pos-receipt-left-padding">
+                                    Discount: <t t-esc="line.discount" />%
+                                </div>
+                            </t>
+                            <div class="pos-receipt-left-padding">
+                                <t t-esc="Math.round(line.quantity * Math.pow(10, env.pos.dp['Product Unit of Measure'])) / Math.pow(10, env.pos.dp['Product Unit of Measure'])"/>
+                                <t t-if="line.unit_name !== 'Units'" t-esc="line.unit_name" />
+                                x
+                                <!--t t-esc="env.pos.format_currency_no_symbol(line.price_display_one)" /-->
+                                <t t-if="env.pos.get_order().invoice_letter == 'A'">
+                                    <!-- Precio unitario sin iva -->
+                                    <t t-esc='env.pos.format_currency_no_symbol(line.price_without_tax / line.quantity)' />
+                                </t>
+                                <t t-if="env.pos.get_order().invoice_letter !== 'A'">
+                                    <!-- Como no tengo Precio unitario con iva, hago el subtotal dividido la cant. de productos -->
+                                    <t t-esc='env.pos.format_currency_no_symbol(line.price_with_tax / line.quantity)'/>
+                                </t>
+
+                                <span class="price_display pos-receipt-right-align">
+                                    <!--t t-esc="env.pos.format_currency_no_symbol(line.price_display)" /-->
+                                    <t t-if="env.pos.get_order().invoice_letter == 'A'">
+                                        <!-- subtotal de producto sin iva -->
+                                        <t t-esc='env.pos.format_currency_no_symbol(line.price_without_tax)'/>
+                                    </t>
+                                    <t t-if="env.pos.get_order().invoice_letter !== 'A'">
+                                        <!-- subtotal de producto con iva -->
+                                        <t t-esc='env.pos.format_currency_no_symbol(line.price_with_tax)'/>
+                                    </t>
+                                </span>
+                            </div>
+                        </t>
+                    </t>
+                </t>
+                <t t-set='imp_inclu' t-value='Math.abs(receipt.subtotal - receipt.total_with_tax) &lt;= 0.000001' />
+                <t t-if="!imp_inclu &amp;&amp; env.pos.get_order().invoice_letter == 'A'">
+                        <div class="pos-receipt-right-align">--------</div>
+                    <br/>
+                    <div><strong>Subtotal</strong><span t-esc='env.pos.format_currency(receipt.subtotal)' class="pos-receipt-right-align"/></div>
+                    <t t-foreach='receipt.tax_details' t-as='tax'>
+                        <div>
+                            <strong><t t-esc='tax.name' /></strong>
+                            <span t-esc='env.pos.format_currency_no_symbol(tax.amount)' class="pos-receipt-right-align"/>
+                        </div>
+                    </t>
+                </t>
+                <t t-if="imp_inclu &amp;&amp; env.pos.get_order().invoice_letter == 'A'">
+                        <div class="pos-receipt-right-align">--------</div>
+                    <br/>
+                    <div><strong>Subtotal</strong><span t-esc='env.pos.format_currency(receipt.total_without_tax)' class="pos-receipt-right-align"/></div>
+                    <t t-foreach='receipt.tax_details' t-as='tax'>
+                        <div>
+                            <strong><t t-esc='tax.name' /></strong>
+                            <span t-esc='env.pos.format_currency_no_symbol(tax.amount)' class="pos-receipt-right-align"/>
+                        </div>
+                    </t>
+                </t>
+            </div>
+        </xpath>
+        <xpath expr="//t[@t-if='isTaxIncluded']" position="replace">
+        </xpath>
+        <xpath expr="//t[@t-if='!isTaxIncluded']" position="replace">
+        </xpath>
+    </t>
+
+</templates>
