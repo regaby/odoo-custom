@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-inherit="point_of_sale.ReceiptHeader" t-inherit-mode="extension">
+        <xpath expr="//div[@t-if='props.data.company.partner_id?.[1]']" position="before">
+            <div style="text-align: center;"><t t-esc="props.data.pos_name" /></div>
+            <div style="margin-bottom:0.4rem;text-align: center;"><t t-esc="props.data.pos_street" /></div>
+        </xpath>
+
+        <xpath expr="//t[@t-if='props.data.company.vat']" position="after">
+            <div>Ing. Brutos: <t t-esc="this.env.services.pos.company.l10n_ar_gross_income_number"/></div>
+            <div>Inicio de actividades: <t t-esc="this.env.services.pos.company.l10n_ar_afip_start_date"/></div>
+            <div><t t-esc="this.env.services.pos.company.l10n_ar_afip_responsibility_type_id[1]"/></div>
+            <div>
+                Dirección: <t t-esc="this.env.services.pos.company.street"/>
+                <t t-if="this.env.services.pos.company.city">, <t t-esc="this.env.services.pos.company.city"/></t>
+                <t t-if="this.env.services.pos.company.state_id">, <t t-esc="this.env.services.pos.company.state_id[1]"/></t>
+                <t t-if="this.env.services.pos.company.country_id">, <t t-esc="this.env.services.pos.company.country_id[1]"/></t>
+            </div>
+        </xpath>
+
+        <xpath expr="//div[hasclass('cashier')]" position="replace">
+            <t t-if='props.data.invoice_number and props.data.receipt_invoice_number'>
+                <div class="afip-invoice-info">
+                    <hr />
+                    <strong>
+                        <t t-esc="props.data.l10n_latam_document_report_name"/> <t t-esc="props.data.invoice_letter"/> COD. <t t-esc="props.data.l10n_latam_document_type_id_code"/>
+                    </strong>
+                    <div style="margin-top: 3px;">N°: <t t-esc="props.data.invoice_number"/></div>
+                    <div style="margin-top: 3px;">FECHA: <t t-esc="props.data.date"/></div>
+                </div>
+            </t>
+
+            <t t-if="this.env.services.pos.get_order().partner">
+                <hr />
+                <div>Cliente: <t t-esc="this.env.services.pos.get_order().partner.name"/></div>
+
+                <t t-if='props.data.invoice_number'>
+                    <t t-if="this.env.services.pos.get_order().partner.l10n_latam_identification_type_id[0] != 7">
+                        <t t-esc='this.env.services.pos.get_order().partner.l10n_latam_identification_type_id[1]' />:
+                    </t>
+                    <t t-if="this.env.services.pos.get_order().partner.vat">
+                        <t t-esc='this.env.services.pos.get_order().partner.vat' />
+                    </t>
+                    <t t-if="this.env.services.pos.get_order().partner.l10n_ar_afip_responsibility_type_id">
+                        <div>Responsabilidad: <t t-esc='this.env.services.pos.get_order().partner.l10n_ar_afip_responsibility_type_id[1]' /></div>
+                    </t>
+                </t>
+
+                <t t-if="this.env.services.pos.get_order().partner.street">
+                    <div>
+                        Dirección: <t t-esc="this.env.services.pos.get_order().partner.street"/>
+                        <t t-if="this.env.services.pos.get_order().partner.city">, <t t-esc="this.env.services.pos.get_order().partner.city"/></t>
+                        <t t-if="this.env.services.pos.get_order().partner.state_id">, <t t-esc="this.env.services.pos.get_order().partner.state_id[1]"/></t>
+                        <t t-if="this.env.services.pos.get_order().partner.country_id">, <t t-esc="this.env.services.pos.get_order().partner.country_id[1]"/></t>
+                    </div>
+                    <t t-if="this.env.services.pos.get_order().partner.email">
+                        <div>Email: <t t-esc="this.env.services.pos.get_order().partner.email"/></div>
+                    </t>
+                    <t t-if="this.env.services.pos.get_order().partner.phone or this.env.services.pos.get_order().partner.mobile">
+                        <div>Tel.: <t t-esc="this.env.services.pos.get_order().partner.phone || this.env.services.pos.get_order().partner.mobile"/></div>
+                    </t>
+                    <t t-if="this.env.services.pos.get_order().partner.website">
+                        <div>Website: <t t-esc="this.env.services.pos.get_order().partner.website"/></div>
+                    </t>
+                </t>
+            </t>
+
+            <div t-if="props.data.cashier" class="cashier">
+                <hr />
+                <div>Cajero: <t t-esc="props.data.cashier" /></div>
+            </div>
+        </xpath>
+    </t>
+
+    <t t-inherit="point_of_sale.OrderReceipt" t-inherit-mode="extension">
+        <xpath expr="//div[@class='before-footer']" position="before">
+            <t t-if="props.data.invoice_letter == 'A'">
+                <!-- Subtotal -->
+                <div class="pos-receipt-taxes" style="margin-top: 10px; font-size: 90%;">
+                    <div style="display: flex; justify-content: space-between;">
+                        <span t-out="'Subtotal: $' + props.formatCurrency(props.data.total_without_tax, false)" />
+                    </div>
+                </div>
+                <!-- Impuestos (debug de etiquetas) -->
+                <div class="pos-receipt-taxes" style="margin-top: 4px; font-size: 90%;">
+                    <t t-foreach="props.data.tax_details" t-as="tax" t-key="tax.tax.id">
+                        <t t-set="etiqueta" t-value="tax.tax.invoice_label or (tax.tax.tax_group_id and tax.tax.tax_group_id[1]) or tax.tax.name"/>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span t-out="etiqueta + ': $' + props.formatCurrency(tax.amount, false)" />
+                        </div>
+                    </t>
+                </div>
+            </t>
+        </xpath>
+
+        <xpath expr="//div[@class='before-footer']" position="after">
+            <t t-if="props.data.l10n_ar_cae or props.data.l10n_ar_qr_code_base64">
+                <div class="afip-cae-info" style="text-align: center; font-size: 75%; margin-top:20px;">
+                    <t t-if="props.data.l10n_ar_qr_code_base64">
+                        <div style="overflow: hidden;">
+                            <img t-att-src="'data:image/png;base64,' + props.data.l10n_ar_qr_code_base64" style="width:180px;height:180px" />
+                        </div>
+                    </t>
+                    <t t-if="props.data.l10n_ar_cae">
+                        <div><strong>CAE:</strong> <t t-esc="props.data.l10n_ar_cae"/></div>
+                        <div style="margin-top:3px;"><strong>Vto. CAE:</strong> <t t-esc="props.data.l10n_ar_cae_due_date"/></div>
+                    </t>
+                </div>
+            </t>
+        </xpath>
+
+        <xpath expr="//div[@class='pos-receipt-taxes']" position="replace"/>
+    </t>
+
+</templates>
