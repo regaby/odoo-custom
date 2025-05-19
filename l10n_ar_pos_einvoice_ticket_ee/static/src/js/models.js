@@ -21,6 +21,17 @@ patch(PosStore.prototype, {
                 current_order.l10n_ar_qr_code_base64 = order.l10n_ar_qr_code_base64 || '';
                 current_order.terms_and_conditions = order.terms_and_conditions || '';
                 
+                // Régimen de Transparencia Fiscal
+                if (order.iva_taxes) {
+                    current_order.iva_taxes = order.iva_taxes;
+                }
+                
+                if (order.other_taxes_total !== undefined) {
+                    current_order.other_taxes_total = order.other_taxes_total;
+                } else {
+                    current_order.other_taxes_total = 0;
+                }
+                
                 // Añadir detalles de impuestos y subtotal si están disponibles
                 if (order.subtotal) {
                     current_order.subtotal = order.subtotal;
@@ -73,6 +84,19 @@ patch(Order.prototype, {
             result.l10n_ar_cae_due_date = this.l10n_ar_cae_due_date || '';
             result.l10n_ar_qr_code_base64 = this.l10n_ar_qr_code_base64 || '';
             result.terms_and_conditions = this.terms_and_conditions || '';
+            
+            // Régimen de Transparencia Fiscal
+            if (this.iva_taxes) {
+                result.iva_taxes = this.iva_taxes;
+            } else {
+                result.iva_taxes = [];
+            }
+            
+            if (this.other_taxes_total !== undefined) {
+                result.other_taxes_total = this.other_taxes_total;
+            } else {
+                result.other_taxes_total = 0;
+            }
             
             // Transferir datos de impuestos desde el backend
             if (this.subtotal !== undefined && this.subtotal !== null) {
