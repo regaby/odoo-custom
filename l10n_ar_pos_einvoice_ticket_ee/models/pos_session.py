@@ -15,6 +15,7 @@ class PosSession(models.Model):
             'state_id',
             'country_id',
             'receipt_invoice_number',
+            'auto_invoice',  # Añadimos este campo para cargarlo en el frontend
         ]
         return res
         
