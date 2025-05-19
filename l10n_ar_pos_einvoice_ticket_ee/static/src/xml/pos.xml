@@ -82,10 +82,6 @@
     </t>
 
     <t t-inherit="point_of_sale.OrderReceipt" t-inherit-mode="extension">
-        <xpath expr="//div[@class='before-footer']" position="before">
-            <!-- No reemplazar esta sección, será manejada por el reemplazo de pos-receipt-taxes -->
-        </xpath>
-
         <xpath expr="//div[@class='before-footer']" position="after">
             <t t-if="props.data.l10n_ar_cae or props.data.l10n_ar_qr_code_base64">
                 <div class="afip-cae-info" style="text-align: center; margin-top: 15px; padding-top: 10px; border-top: 1px dashed black;">
@@ -109,27 +105,22 @@
         <xpath expr="//div[@class='pos-receipt-taxes']" position="replace">
             <div class="pos-receipt-taxes">
                 <!-- Para facturas tipo A (Responsable Inscripto) -->
-                <t t-if="props.data.invoice_letter == 'A'">
+                <t t-if="props.data.invoice_letter == 'A' and props.data.subtotal">
                     <div style="border-top: 1px dashed black; margin: 10px 0px 5px 0px;"></div>
                     <!-- Subtotal sin impuestos -->
                     <div style="display: flex; justify-content: space-between; margin-top: 5px;">
                         <span>Subtotal:</span>
-                        <span t-esc="props.formatCurrency(props.data.total_without_tax)"/>
+                        <span t-esc="props.formatCurrency(props.data.subtotal)"/>
                     </div>
                     
-                    <!-- Detalle de impuestos -->
-                    <t t-foreach="props.data.tax_details" t-as="tax" t-key="tax.tax.id">
-                        <div style="display: flex; justify-content: space-between; margin-top: 2px; font-size: 90%;">
-                            <span>
-                                <t t-if="tax.tax.name.includes('IVA')">
-                                    <t t-esc="tax.tax.name"/>
-                                </t>
-                                <t t-else="">
-                                    <t t-esc="tax.tax.name || (tax.tax.tax_group_id ? tax.tax.tax_group_id[1] : '')"/>
-                                </t>
-                            </span>
-                            <span t-esc="props.formatCurrency(tax.amount)"/>
-                        </div>
+                    <!-- Detalle de impuestos (utilizando datos enviados desde el backend) -->
+                    <t t-if="props.data.detailed_taxes">
+                        <t t-foreach="props.data.detailed_taxes" t-as="tax" t-key="tax_index">
+                            <div style="display: flex; justify-content: space-between; margin-top: 2px; font-size: 90%;">
+                                <span><t t-esc="tax.name"/></span>
+                                <span t-esc="props.formatCurrency(tax.amount)"/>
+                            </div>
+                        </t>
                     </t>
                     
                     <!-- Total con impuestos -->
