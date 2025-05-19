@@ -59,28 +59,35 @@ class PosOrder(models.Model):
                         tax_details = []
                         
                         # En Odoo 17, debemos usar invoice_line_ids y sus tax_ids
+                        # Obtener todos los impuestos aplicados a la factura
+                        tax_groups = {}
+                        
                         for line in invoice.invoice_line_ids:
                             for tax in line.tax_ids:
                                 try:
                                     # Calcular el monto del impuesto para esta línea
                                     tax_amount = line.price_subtotal * (tax.amount / 100.0)
                                     
-                                    # Buscar si ya existe un impuesto del mismo tipo
-                                    existing_tax = next((t for t in tax_details if t.get('id') == tax.id), None)
-                                    
-                                    if existing_tax:
-                                        # Sumar al impuesto existente
-                                        existing_tax['amount'] += tax_amount
-                                    else:
-                                        # Crear un nuevo registro de impuesto
-                                        tax_details.append({
+                                    # Agrupar por ID de impuesto
+                                    if tax.id not in tax_groups:
+                                        tax_groups[tax.id] = {
                                             'id': tax.id,
                                             'name': tax.name or '',
-                                            'amount': tax_amount,
+                                            'invoice_label': tax.invoice_label or tax.name or '',
+                                            'amount': 0,
                                             'tax_group': tax.tax_group_id.name if tax.tax_group_id else ''
-                                        })
+                                        }
+                                    
+                                    tax_groups[tax.id]['amount'] += tax_amount
+                                    
                                 except Exception as e:
                                     _logger.error("Error procesando impuesto %s: %s", tax.name, str(e))
+                        
+                        # Convertir el diccionario a lista
+                        tax_details = list(tax_groups.values())
+                        
+                        # Ordenar por monto de mayor a menor
+                        tax_details.sort(key=lambda x: x['amount'], reverse=True)
                         
                         order['detailed_taxes'] = tax_details
 
