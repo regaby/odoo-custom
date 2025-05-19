@@ -3,6 +3,37 @@
 import { PosStore } from "@point_of_sale/app/store/pos_store";
 import { Order } from "@point_of_sale/app/store/models";
 import { patch } from "@web/core/utils/patch";
+import { ProductScreen } from "@point_of_sale/app/screens/product_screen/product_screen";
+
+// Patch para la pantalla de productos para activar automáticamente la facturación
+patch(ProductScreen.prototype, {
+    setup() {
+        super.setup(...arguments);
+        this.env.services.pos_bus.on('order-selected', this, this._onOrderSelected);
+    },
+
+    _onOrderSelected({ detail: order }) {
+        if (order && this.env.services.pos.config.auto_invoice) {
+            order.set_to_invoice(true);
+        }
+    },
+
+    async _onClickCustomer() {
+        await super._onClickCustomer(...arguments);
+        const order = this.env.services.pos.get_order();
+        if (order && this.env.services.pos.config.auto_invoice) {
+            order.set_to_invoice(true);
+        }
+    },
+
+    async _onClickPay() {
+        const order = this.env.services.pos.get_order();
+        if (order && this.env.services.pos.config.auto_invoice) {
+            order.set_to_invoice(true);
+        }
+        await super._onClickPay(...arguments);
+    }
+});
 
 patch(PosStore.prototype, {
     async _flush_orders(orders, options) {
@@ -53,9 +84,17 @@ patch(PosStore.prototype, {
             });
         }
         return result;
+    },
+
+    // Método para cargar la configuración de facturación automática
+    async _processConfig() {
+        await super._processConfig(...arguments);
+        // Asegurarnos de que la configuración se carga
+        this.config.auto_invoice = this.company.auto_invoice || false;
     }
 });
 
+// Patch para Order para establecer facturación automática en nuevas órdenes
 patch(Order.prototype, {
     export_for_printing() {
         const result = super.export_for_printing(...arguments);
@@ -134,5 +173,13 @@ patch(Order.prototype, {
         }
 
         return result;
+    },
+
+    // Sobreescribir el método init para establecer facturas automáticas
+    init(obj, options) {
+        super.init(...arguments);
+        if (this.pos && this.pos.config && this.pos.config.auto_invoice) {
+            this.set_to_invoice(true);
+        }
     }
 });
