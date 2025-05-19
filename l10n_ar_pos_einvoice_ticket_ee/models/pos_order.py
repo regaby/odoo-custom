@@ -50,14 +50,29 @@ class PosOrder(models.Model):
                     subtotal = invoice.amount_untaxed
                     order['subtotal'] = subtotal
                     
-                    # Detalles de impuestos
+                    # Detalles de impuestos - usando invoice.line_ids.tax_ids en lugar de tax_line_ids
                     tax_details = []
-                    for tax_line in invoice.tax_line_ids:
-                        tax_details.append({
-                            'name': tax_line.tax_id.name,
-                            'amount': tax_line.amount,
-                            'tax_group': tax_line.tax_id.tax_group_id.name if tax_line.tax_id.tax_group_id else ''
-                        })
+                    # En Odoo 17, debemos usar invoice_line_ids y sus tax_ids
+                    for line in invoice.invoice_line_ids:
+                        for tax in line.tax_ids:
+                            # Calcular el monto del impuesto para esta línea
+                            tax_amount = line.price_subtotal * (tax.amount / 100.0)
+                            
+                            # Buscar si ya existe un impuesto del mismo tipo
+                            existing_tax = next((t for t in tax_details if t['id'] == tax.id), None)
+                            
+                            if existing_tax:
+                                # Sumar al impuesto existente
+                                existing_tax['amount'] += tax_amount
+                            else:
+                                # Crear un nuevo registro de impuesto
+                                tax_details.append({
+                                    'id': tax.id,
+                                    'name': tax.name,
+                                    'amount': tax_amount,
+                                    'tax_group': tax.tax_group_id.name if tax.tax_group_id else ''
+                                })
+                    
                     order['detailed_taxes'] = tax_details
 
                 # Log detallado para depuración
