@@ -3,11 +3,7 @@
 import { PosStore } from "@point_of_sale/app/store/pos_store";
 import { Order } from "@point_of_sale/app/store/models";
 import { patch } from "@web/core/utils/patch";
-import { ReceiptScreen } from "@point_of_sale/app/screens/receipt_screen/receipt_screen";
-import { useBarcodeReader } from "@point_of_sale/app/barcode/barcode_reader_hook";
-import { useService } from "@web/core/utils/hooks";
 
-// Patch para PosStore
 patch(PosStore.prototype, {
     async _flush_orders(orders, options) {
         const result = await super._flush_orders(...arguments);
@@ -54,20 +50,9 @@ patch(PosStore.prototype, {
             });
         }
         return result;
-    },
-
-    // Sobreescribir create_order para activar facturación automática
-    create_order() {
-        const order = super.create_order(...arguments);
-        if (this.company && this.company.auto_invoice) {
-            // Modificamos directamente la propiedad en lugar de usar set_to_invoice
-            order.to_invoice = true;
-        }
-        return order;
     }
 });
 
-// Un patch directo para el método Order.init
 patch(Order.prototype, {
     export_for_printing() {
         const result = super.export_for_printing(...arguments);
@@ -81,6 +66,11 @@ patch(Order.prototype, {
         if (this.pos && this.pos.company) {
             result.headerData.receipt_invoice_number = this.pos.company.receipt_invoice_number || false;
             result.receipt_invoice_number = this.pos.company.receipt_invoice_number || false;
+            
+            // Aplicar facturación automática si está configurada
+            if (this.pos.company.auto_invoice) {
+                this.to_invoice = true;
+            }
         } else {
             result.headerData.receipt_invoice_number = false;
             result.receipt_invoice_number = false;
@@ -139,15 +129,21 @@ patch(Order.prototype, {
         return result;
     },
     
-    // Sobreescribimos completamente el constructor para establecer to_invoice
     init(obj, options) {
         super.init(...arguments);
-        
-        // Establecer facturación automática si está configurada
+        // Aplicar facturación automática si está configurada
         if (this.pos && this.pos.company && this.pos.company.auto_invoice) {
             this.to_invoice = true;
         }
+    },
+    
+    // Añadimos este método para asegurar que se aplique en cada restauración de la orden
+    set_client(client) {
+        super.set_client(...arguments);
+        // Aplicar facturación automática si está configurada
+        if (this.pos && this.pos.company && this.pos.company.auto_invoice) {
+            this.to_invoice = true;
+        }
+        return this;
     }
 });
-
-// Crear un nuevo archivo JavaScript para manejar la funcionalidad de auto-factura
