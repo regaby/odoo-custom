@@ -115,8 +115,12 @@
                             <img t-att-src="'data:image/png;base64,' + props.data.l10n_ar_qr_code_base64" style="width:100%; height:100%;" />
                         </div>
                         <!-- Leyenda ARCA en grande y negrita -->
-                        <div style="font-size: 180%; font-weight: bold; margin: 10px 0 15px 0; letter-spacing: 2px;">
+                        <div style="font-size: 180%; font-weight: bold; margin: 10px 0 2px 0; letter-spacing: 2px;">
                             ARCA
+                        </div>
+                        <!-- Aclaración de las siglas -->
+                        <div style="font-size: 85%; margin-bottom: 12px;">
+                            <strong>Agencia de Recaudación y Control Aduanero</strong>
                         </div>
                     </t>
                     <t t-if="props.data.l10n_ar_cae">
