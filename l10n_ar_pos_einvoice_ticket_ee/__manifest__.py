@@ -1,4 +1,3 @@
-
 # -*- coding: utf-8 -*-
 {
     'name': 'POS eInvoice Ticket',
@@ -18,6 +17,7 @@
     'assets': {
         'point_of_sale._assets_pos': [
             'l10n_ar_pos_einvoice_ticket_ee/static/src/js/models.js',
+            'l10n_ar_pos_einvoice_ticket_ee/static/src/js/auto_invoice.js',  # Nuevo archivo
             'l10n_ar_pos_einvoice_ticket_ee/static/src/xml/pos.xml',
         ],
     },
