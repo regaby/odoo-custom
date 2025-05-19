@@ -169,21 +169,6 @@ class PosOrder(models.Model):
                     
                     order['detailed_taxes'] = tax_details
 
-                    # Log detallado para depuración
-                    _logger.info("📄 Invoice ID: %s", invoice.id)
-                    _logger.info("📄 Invoice Name: %s", invoice.name)
-                    if doc_type:
-                        _logger.info("📄 Doc Type fields: %s", doc_type.read(['name', 'report_name', 'code', 'l10n_ar_letter']))
-                        _logger.info("📌 Letra: %s", doc_type.l10n_ar_letter)
-                    
-                    # Log de impuestos para facturas
-                    _logger.info("💲 Subtotal: %s", subtotal)
-                    _logger.info("💰 IVA Taxes: %s", json.dumps(iva_tax_list))
-                    _logger.info("💰 Other Taxes: %s", other_taxes_total)
-                    
-                    _logger.info("📝 Términos y condiciones: %s", terms_and_conditions)
-                    _logger.info("🔍 QR inicio: %s...", qr_src[:60] if qr_src else "N/A")
-                    
                 except Exception as e:
                     _logger.error("Error procesando factura %s: %s", order.get('account_move'), str(e))
         return res
