@@ -42,6 +42,7 @@
                     
                     <t t-if='props.data.invoice_number'>
                         <div style="margin: 3px 0;">
+                            <!-- Error en esta línea: & debe ser &amp; -->
                             <t t-if="this.env.services.pos.get_order().partner.l10n_latam_identification_type_id &amp;&amp; this.env.services.pos.get_order().partner.l10n_latam_identification_type_id[0] != 7">
                                 <t t-esc='this.env.services.pos.get_order().partner.l10n_latam_identification_type_id[1] || ""' />:
                             </t>
@@ -105,7 +106,7 @@
         <xpath expr="//div[@class='pos-receipt-taxes']" position="replace">
             <div class="pos-receipt-taxes">
                 <!-- Para facturas tipo A (Responsable Inscripto) -->
-                <t t-if="props.data.invoice_letter == 'A' && props.data.subtotal">
+                <t t-if="props.data.invoice_letter == 'A' &amp;&amp; props.data.subtotal">
                     <div style="border-top: 1px dashed black; margin: 10px 0px 5px 0px;"></div>
                     <!-- Subtotal sin impuestos -->
                     <div style="display: flex; justify-content: space-between; margin-top: 5px;">
@@ -114,7 +115,7 @@
                     </div>
                     
                     <!-- Detalle de impuestos (utilizando datos enviados desde el backend) -->
-                    <t t-if="props.data.detailed_taxes && props.data.detailed_taxes.length">
+                    <t t-if="props.data.detailed_taxes &amp;&amp; props.data.detailed_taxes.length">
                         <t t-foreach="props.data.detailed_taxes" t-as="tax" t-key="tax_index">
                             <div style="display: flex; justify-content: space-between; margin-top: 2px; font-size: 90%;">
                                 <span><t t-esc="tax.name || ''"/></span>
