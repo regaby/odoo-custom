@@ -4,22 +4,22 @@
     <t t-inherit="point_of_sale.ReceiptHeader" t-inherit-mode="extension">
         <xpath expr="//div[@t-if='props.data.company.partner_id?.[1]']" position="before">
             <div style="text-align: center; font-weight: bold; font-size: 110%; margin-bottom: 5px;">
-                <t t-esc="props.data.pos_name" />
+                <t t-esc="props.data.pos_name || ''" />
             </div>
             <div style="text-align: center; margin-bottom: 8px;">
-                <t t-esc="props.data.pos_street" />
+                <t t-esc="props.data.pos_street || ''" />
             </div>
         </xpath>
 
         <xpath expr="//t[@t-if='props.data.company.vat']" position="after">
-            <div>Ing. Brutos: <t t-esc="this.env.services.pos.company.l10n_ar_gross_income_number"/></div>
-            <div>Inicio de actividades: <t t-esc="this.env.services.pos.company.l10n_ar_afip_start_date"/></div>
-            <div><t t-esc="this.env.services.pos.company.l10n_ar_afip_responsibility_type_id[1]"/></div>
+            <div>Ing. Brutos: <t t-esc="this.env.services.pos.company.l10n_ar_gross_income_number || ''"/></div>
+            <div>Inicio de actividades: <t t-esc="this.env.services.pos.company.l10n_ar_afip_start_date || ''"/></div>
+            <div><t t-esc="this.env.services.pos.company.l10n_ar_afip_responsibility_type_id ? this.env.services.pos.company.l10n_ar_afip_responsibility_type_id[1] : ''"/></div>
             <div>
-                Dirección: <t t-esc="this.env.services.pos.company.street"/>
+                Dirección: <t t-esc="this.env.services.pos.company.street || ''"/>
                 <t t-if="this.env.services.pos.company.city">, <t t-esc="this.env.services.pos.company.city"/></t>
-                <t t-if="this.env.services.pos.company.state_id">, <t t-esc="this.env.services.pos.company.state_id[1]"/></t>
-                <t t-if="this.env.services.pos.company.country_id">, <t t-esc="this.env.services.pos.company.country_id[1]"/></t>
+                <t t-if="this.env.services.pos.company.state_id">, <t t-esc="this.env.services.pos.company.state_id[1] || ''"/></t>
+                <t t-if="this.env.services.pos.company.country_id">, <t t-esc="this.env.services.pos.company.country_id[1] || ''"/></t>
             </div>
         </xpath>
 
@@ -28,47 +28,47 @@
                 <div class="afip-invoice-info" style="text-align: center; margin: 8px 0;">
                     <hr style="border-top: 1px solid black;" />
                     <div style="font-size: 120%; font-weight: bold; margin: 5px 0;">
-                        <t t-esc="props.data.l10n_latam_document_report_name"/> <t t-esc="props.data.invoice_letter"/> COD. <t t-esc="props.data.l10n_latam_document_type_id_code"/>
+                        <t t-esc="props.data.l10n_latam_document_report_name || ''"/> <t t-esc="props.data.invoice_letter || ''"/> COD. <t t-esc="props.data.l10n_latam_document_type_id_code || ''"/>
                     </div>
-                    <div style="margin: 4px 0;">N°: <t t-esc="props.data.invoice_number"/></div>
-                    <div style="margin: 4px 0;">FECHA: <t t-esc="props.data.date"/></div>
+                    <div style="margin: 4px 0;">N°: <t t-esc="props.data.invoice_number || ''"/></div>
+                    <div style="margin: 4px 0;">FECHA: <t t-esc="props.data.date || ''"/></div>
                     <hr style="border-top: 1px solid black;" />
                 </div>
             </t>
 
             <t t-if="this.env.services.pos.get_order().partner">
                 <div style="margin: 8px 0;">
-                    <div style="font-weight: bold;">Cliente: <t t-esc="this.env.services.pos.get_order().partner.name"/></div>
+                    <div style="font-weight: bold;">Cliente: <t t-esc="this.env.services.pos.get_order().partner.name || ''"/></div>
                     
                     <t t-if='props.data.invoice_number'>
                         <div style="margin: 3px 0;">
-                            <t t-if="this.env.services.pos.get_order().partner.l10n_latam_identification_type_id[0] != 7">
-                                <t t-esc='this.env.services.pos.get_order().partner.l10n_latam_identification_type_id[1]' />:
+                            <t t-if="this.env.services.pos.get_order().partner.l10n_latam_identification_type_id &amp;&amp; this.env.services.pos.get_order().partner.l10n_latam_identification_type_id[0] != 7">
+                                <t t-esc='this.env.services.pos.get_order().partner.l10n_latam_identification_type_id[1] || ""' />:
                             </t>
                             <t t-if="this.env.services.pos.get_order().partner.vat">
-                                <t t-esc='this.env.services.pos.get_order().partner.vat' />
+                                <t t-esc='this.env.services.pos.get_order().partner.vat || ""' />
                             </t>
                         </div>
                         <t t-if="this.env.services.pos.get_order().partner.l10n_ar_afip_responsibility_type_id">
-                            <div style="margin: 3px 0;">Responsabilidad: <t t-esc='this.env.services.pos.get_order().partner.l10n_ar_afip_responsibility_type_id[1]' /></div>
+                            <div style="margin: 3px 0;">Responsabilidad: <t t-esc='this.env.services.pos.get_order().partner.l10n_ar_afip_responsibility_type_id[1] || ""' /></div>
                         </t>
                     </t>
 
                     <t t-if="this.env.services.pos.get_order().partner.street">
                         <div style="margin: 3px 0;">
-                            Dirección: <t t-esc="this.env.services.pos.get_order().partner.street"/>
-                            <t t-if="this.env.services.pos.get_order().partner.city">, <t t-esc="this.env.services.pos.get_order().partner.city"/></t>
-                            <t t-if="this.env.services.pos.get_order().partner.state_id">, <t t-esc="this.env.services.pos.get_order().partner.state_id[1]"/></t>
-                            <t t-if="this.env.services.pos.get_order().partner.country_id"> (<t t-esc="this.env.services.pos.get_order().partner.country_id[1]"/>)</t>
+                            Dirección: <t t-esc="this.env.services.pos.get_order().partner.street || ''"/>
+                            <t t-if="this.env.services.pos.get_order().partner.city">, <t t-esc="this.env.services.pos.get_order().partner.city || ''"/></t>
+                            <t t-if="this.env.services.pos.get_order().partner.state_id">, <t t-esc="this.env.services.pos.get_order().partner.state_id[1] || ''"/></t>
+                            <t t-if="this.env.services.pos.get_order().partner.country_id"> (<t t-esc="this.env.services.pos.get_order().partner.country_id[1] || ''"/>)</t>
                         </div>
                     </t>
                     <div t-if="this.env.services.pos.get_order().partner.email || this.env.services.pos.get_order().partner.phone" style="margin: 3px 0;">
                         <t t-if="this.env.services.pos.get_order().partner.email">
-                            Email: <t t-esc="this.env.services.pos.get_order().partner.email"/>
+                            Email: <t t-esc="this.env.services.pos.get_order().partner.email || ''"/>
                         </t>
                         <t t-if="this.env.services.pos.get_order().partner.phone || this.env.services.pos.get_order().partner.mobile">
                             <t t-if="this.env.services.pos.get_order().partner.email"> | </t>
-                            Tel.: <t t-esc="this.env.services.pos.get_order().partner.phone || this.env.services.pos.get_order().partner.mobile"/>
+                            Tel.: <t t-esc="this.env.services.pos.get_order().partner.phone || this.env.services.pos.get_order().partner.mobile || ''"/>
                         </t>
                     </div>
                 </div>
@@ -76,14 +76,14 @@
 
             <div t-if="props.data.cashier" class="cashier">
                 <hr />
-                <div>Cajero: <t t-esc="props.data.cashier" /></div>
+                <div>Cajero: <t t-esc="props.data.cashier || ''" /></div>
             </div>
         </xpath>
     </t>
 
     <t t-inherit="point_of_sale.OrderReceipt" t-inherit-mode="extension">
         <xpath expr="//div[@class='before-footer']" position="after">
-            <t t-if="props.data.l10n_ar_cae or props.data.l10n_ar_qr_code_base64">
+            <t t-if="props.data.l10n_ar_cae || props.data.l10n_ar_qr_code_base64">
                 <div class="afip-cae-info" style="text-align: center; margin-top: 15px; padding-top: 10px; border-top: 1px dashed black;">
                     <t t-if="props.data.l10n_ar_qr_code_base64">
                         <div style="margin: 0 auto; width: 160px; height: 160px;">
@@ -92,10 +92,10 @@
                     </t>
                     <t t-if="props.data.l10n_ar_cae">
                         <div style="font-size: 90%; margin-top: 5px;">
-                            <strong>CAE:</strong> <t t-esc="props.data.l10n_ar_cae"/>
+                            <strong>CAE:</strong> <t t-esc="props.data.l10n_ar_cae || ''"/>
                         </div>
                         <div style="font-size: 90%; margin-top: 3px;">
-                            <strong>Vto. CAE:</strong> <t t-esc="props.data.l10n_ar_cae_due_date"/>
+                            <strong>Vto. CAE:</strong> <t t-esc="props.data.l10n_ar_cae_due_date || ''"/>
                         </div>
                     </t>
                 </div>
@@ -105,20 +105,20 @@
         <xpath expr="//div[@class='pos-receipt-taxes']" position="replace">
             <div class="pos-receipt-taxes">
                 <!-- Para facturas tipo A (Responsable Inscripto) -->
-                <t t-if="props.data.invoice_letter == 'A' and props.data.subtotal">
+                <t t-if="props.data.invoice_letter == 'A' && props.data.subtotal">
                     <div style="border-top: 1px dashed black; margin: 10px 0px 5px 0px;"></div>
                     <!-- Subtotal sin impuestos -->
                     <div style="display: flex; justify-content: space-between; margin-top: 5px;">
                         <span>Subtotal:</span>
-                        <span t-esc="props.formatCurrency(props.data.subtotal)"/>
+                        <span t-esc="props.formatCurrency(props.data.subtotal || 0)"/>
                     </div>
                     
                     <!-- Detalle de impuestos (utilizando datos enviados desde el backend) -->
-                    <t t-if="props.data.detailed_taxes">
+                    <t t-if="props.data.detailed_taxes && props.data.detailed_taxes.length">
                         <t t-foreach="props.data.detailed_taxes" t-as="tax" t-key="tax_index">
                             <div style="display: flex; justify-content: space-between; margin-top: 2px; font-size: 90%;">
-                                <span><t t-esc="tax.name"/></span>
-                                <span t-esc="props.formatCurrency(tax.amount)"/>
+                                <span><t t-esc="tax.name || ''"/></span>
+                                <span t-esc="props.formatCurrency(tax.amount || 0)"/>
                             </div>
                         </t>
                     </t>
@@ -126,7 +126,7 @@
                     <!-- Total con impuestos -->
                     <div style="display: flex; justify-content: space-between; margin-top: 5px; font-weight: bold;">
                         <span>TOTAL</span>
-                        <span t-esc="props.formatCurrency(props.data.total_with_tax)"/>
+                        <span t-esc="props.formatCurrency(props.data.total_with_tax || 0)"/>
                     </div>
                 </t>
                 
@@ -136,7 +136,7 @@
                     <div style="border-top: 1px dashed black; margin: 10px 0px 5px 0px;"></div>
                     <div style="display: flex; justify-content: space-between; margin: 5px 0px; font-weight: bold;">
                         <span>TOTAL</span>
-                        <span t-esc="props.formatCurrency(props.data.total_with_tax)"/>
+                        <span t-esc="props.formatCurrency(props.data.total_with_tax || 0)"/>
                     </div>
                 </t>
             </div>
