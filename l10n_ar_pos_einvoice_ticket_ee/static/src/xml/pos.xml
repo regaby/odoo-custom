@@ -42,7 +42,6 @@
                     
                     <t t-if='props.data.invoice_number'>
                         <div style="margin: 3px 0;">
-                            <!-- Error en esta línea: & debe ser &amp; -->
                             <t t-if="this.env.services.pos.get_order().partner.l10n_latam_identification_type_id &amp;&amp; this.env.services.pos.get_order().partner.l10n_latam_identification_type_id[0] != 7">
                                 <t t-esc='this.env.services.pos.get_order().partner.l10n_latam_identification_type_id[1] || ""' />:
                             </t>
@@ -83,6 +82,30 @@
     </t>
 
     <t t-inherit="point_of_sale.OrderReceipt" t-inherit-mode="extension">
+        <!-- Aquí insertamos el subtotal y los impuestos ANTES del total nativo -->
+        <xpath expr="//div[hasclass('pos-receipt-amount')]" position="before">
+            <!-- Para facturas tipo A (Responsable Inscripto) -->
+            <t t-if="props.data.invoice_letter == 'A' &amp;&amp; props.data.subtotal">
+                <div style="border-top: 1px dashed black; margin: 10px 0px 5px 0px;"></div>
+                
+                <!-- Subtotal sin impuestos -->
+                <div style="display: flex; justify-content: space-between; margin-top: 5px;">
+                    <span>Subtotal:</span>
+                    <span t-esc="props.formatCurrency(props.data.subtotal || 0)"/>
+                </div>
+                
+                <!-- Detalle de impuestos (utilizando invoice_label) -->
+                <t t-if="props.data.detailed_taxes &amp;&amp; props.data.detailed_taxes.length">
+                    <t t-foreach="props.data.detailed_taxes" t-as="tax" t-key="tax_index">
+                        <div style="display: flex; justify-content: space-between; margin-top: 2px;">
+                            <span><t t-esc="tax.invoice_label || tax.name || ''"/></span>
+                            <span t-esc="props.formatCurrency(tax.amount || 0)"/>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </xpath>
+
         <xpath expr="//div[@class='before-footer']" position="after">
             <t t-if="props.data.l10n_ar_cae || props.data.l10n_ar_qr_code_base64">
                 <div class="afip-cae-info" style="text-align: center; margin-top: 15px; padding-top: 10px; border-top: 1px dashed black;">
@@ -103,44 +126,9 @@
             </t>
         </xpath>
 
+        <!-- Eliminamos nuestra modificación anterior de la sección de impuestos para no interferir con el TOTAL nativo -->
         <xpath expr="//div[@class='pos-receipt-taxes']" position="replace">
-            <div class="pos-receipt-taxes">
-                <!-- Para facturas tipo A (Responsable Inscripto) -->
-                <t t-if="props.data.invoice_letter == 'A' &amp;&amp; props.data.subtotal">
-                    <div style="border-top: 1px dashed black; margin: 10px 0px 5px 0px;"></div>
-                    <!-- Subtotal sin impuestos -->
-                    <div style="display: flex; justify-content: space-between; margin-top: 5px;">
-                        <span>Subtotal:</span>
-                        <span t-esc="props.formatCurrency(props.data.subtotal || 0)"/>
-                    </div>
-                    
-                    <!-- Detalle de impuestos (utilizando datos enviados desde el backend) -->
-                    <t t-if="props.data.detailed_taxes &amp;&amp; props.data.detailed_taxes.length">
-                        <t t-foreach="props.data.detailed_taxes" t-as="tax" t-key="tax_index">
-                            <div style="display: flex; justify-content: space-between; margin-top: 2px; font-size: 90%;">
-                                <span><t t-esc="tax.name || ''"/></span>
-                                <span t-esc="props.formatCurrency(tax.amount || 0)"/>
-                            </div>
-                        </t>
-                    </t>
-                    
-                    <!-- Total con impuestos -->
-                    <div style="display: flex; justify-content: space-between; margin-top: 5px; font-weight: bold;">
-                        <span>TOTAL</span>
-                        <span t-esc="props.formatCurrency(props.data.total_with_tax || 0)"/>
-                    </div>
-                </t>
-                
-                <!-- Para facturas tipo B y otras -->
-                <t t-else="">
-                    <!-- Solo mostrar el total, sin discriminar impuestos -->
-                    <div style="border-top: 1px dashed black; margin: 10px 0px 5px 0px;"></div>
-                    <div style="display: flex; justify-content: space-between; margin: 5px 0px; font-weight: bold;">
-                        <span>TOTAL</span>
-                        <span t-esc="props.formatCurrency(props.data.total_with_tax || 0)"/>
-                    </div>
-                </t>
-            </div>
+            <!-- No hacemos nada aquí, dejamos que Odoo muestre su TOTAL nativo -->
         </xpath>
     </t>
 
