@@ -4,15 +4,18 @@ import { PosStore } from "@point_of_sale/app/store/pos_store";
 import { Order } from "@point_of_sale/app/store/models";
 import { patch } from "@web/core/utils/patch";
 import { ProductScreen } from "@point_of_sale/app/screens/product_screen/product_screen";
+import { usePos } from "@point_of_sale/app/store/pos_hook";
 
 // Patch para la pantalla de productos para activar automáticamente la facturación
 patch(ProductScreen.prototype, {
     setup() {
         super.setup(...arguments);
-        this.env.services.pos_bus.on('order-selected', this, this._onOrderSelected);
+        const pos = usePos();
+        // Observamos cuando se selecciona una orden
+        pos.orderManagement.on("order-selected", this._onOrderSelected.bind(this));
     },
 
-    _onOrderSelected({ detail: order }) {
+    _onOrderSelected({ order }) {
         if (order && this.env.services.pos.config.auto_invoice) {
             order.set_to_invoice(true);
         }
