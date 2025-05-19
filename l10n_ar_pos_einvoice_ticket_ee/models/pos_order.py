@@ -4,6 +4,7 @@ import logging
 import base64
 import qrcode
 from io import BytesIO
+import json
 
 _logger = logging.getLogger(__name__)
 
@@ -42,25 +43,33 @@ class PosOrder(models.Model):
                 order['l10n_ar_cae'] = invoice.l10n_ar_afip_auth_code or ''
                 order['l10n_ar_cae_due_date'] = invoice.l10n_ar_afip_auth_code_due or ''
                 order['l10n_ar_qr_code_base64'] = qr_src
+                
+                # Información específica para facturas tipo A
+                if doc_type.l10n_ar_letter == 'A':
+                    # Calcular y agregar subtotal e impuestos
+                    subtotal = invoice.amount_untaxed
+                    order['subtotal'] = subtotal
+                    
+                    # Detalles de impuestos
+                    tax_details = []
+                    for tax_line in invoice.tax_line_ids:
+                        tax_details.append({
+                            'name': tax_line.tax_id.name,
+                            'amount': tax_line.amount,
+                            'tax_group': tax_line.tax_id.tax_group_id.name if tax_line.tax_id.tax_group_id else ''
+                        })
+                    order['detailed_taxes'] = tax_details
 
-                # Log detallado
+                # Log detallado para depuración
                 _logger.info("📄 Invoice ID: %s", invoice.id)
                 _logger.info("📄 Invoice Name: %s", invoice.name)
                 _logger.info("📄 Doc Type fields: %s", doc_type.read(['name', 'report_name', 'code', 'l10n_ar_letter']))
                 _logger.info("📌 Letra: %s", doc_type.l10n_ar_letter)
-                _logger.info("🔍 QR inicio: %s...", qr_src[:60])
+                
+                # Log de impuestos para facturas tipo A
+                if doc_type.l10n_ar_letter == 'A':
+                    _logger.info("💲 Subtotal: %s", subtotal)
+                    _logger.info("💰 Tax Details: %s", json.dumps(tax_details))
+                
+                _logger.info("🔍 QR inicio: %s...", qr_src[:60] if qr_src else "N/A")
         return res
-
-
-
-
-
-
-
-
-
-
-
-
-
-
