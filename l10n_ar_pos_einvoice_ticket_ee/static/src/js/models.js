@@ -23,6 +23,7 @@ patch(PosStore.prototype, {
                 
                 // Régimen de Transparencia Fiscal
                 if (order.iva_taxes) {
+                    // Asegurarnos de que cada elemento de iva_taxes tenga un ID único
                     current_order.iva_taxes = order.iva_taxes.map((tax, index) => {
                         return { ...tax, id: tax.id || `iva_tax_${index}` };
                     });
@@ -36,11 +37,13 @@ patch(PosStore.prototype, {
                     current_order.other_taxes_total = 0;
                 }
                 
+                // Añadir detalles de impuestos y subtotal si están disponibles
                 if (order.subtotal) {
                     current_order.subtotal = order.subtotal;
                 }
                 
                 if (order.detailed_taxes) {
+                    // Asegurarnos de que cada elemento de detailed_taxes tenga un ID único
                     current_order.detailed_taxes = order.detailed_taxes.map((tax, index) => {
                         return { ...tax, id: tax.id || `tax_${index}` };
                     });
@@ -50,6 +53,31 @@ patch(PosStore.prototype, {
             });
         }
         return result;
+    },
+
+    // Método para cargar la configuración de facturación automática
+    async _processConfig() {
+        await super._processConfig(...arguments);
+        // Asegurarnos de que la configuración se carga
+        this.config.auto_invoice = this.company.auto_invoice || false;
+    },
+    
+    // Sobreescribir el método de crear orden para aplicar auto factura
+    add_new_order() {
+        const order = super.add_new_order(...arguments);
+        if (this.config.auto_invoice) {
+            order.set_to_invoice(true);
+        }
+        return order;
+    },
+    
+    // Sobreescribir el método de seleccionar orden para aplicar auto factura
+    set_order(order) {
+        super.set_order(...arguments);
+        if (order && this.config.auto_invoice) {
+            order.set_to_invoice(true);
+        }
+        return order;
     }
 });
 
@@ -57,25 +85,24 @@ patch(Order.prototype, {
     export_for_printing() {
         const result = super.export_for_printing(...arguments);
         
+        // Verificar que headerData exista
         result.headerData = result.headerData || {};
         
+        // Agregar datos de encabezado y configuración
         result.headerData.pos_name = this.pos.config.name || '';
         result.headerData.pos_street = this.pos.config.street || '';
         result.headerData.date = result.date || '';
         
+        // Asegurarse de que company existe
         if (this.pos && this.pos.company) {
             result.headerData.receipt_invoice_number = this.pos.company.receipt_invoice_number || false;
             result.receipt_invoice_number = this.pos.company.receipt_invoice_number || false;
-            
-            // Aplicar facturación automática si está configurada
-            if (this.pos.company.auto_invoice) {
-                this.to_invoice = true;
-            }
         } else {
             result.headerData.receipt_invoice_number = false;
             result.receipt_invoice_number = false;
         }
 
+        // Si hay factura, añadir datos específicos de factura
         if (this.invoice_number) {
             const invoice_letter = this.invoice_number.split(" ")[0]?.substring(3, 4) || '';
             const invoice_number = this.invoice_number.split(" ")[1] || '';
@@ -93,7 +120,9 @@ patch(Order.prototype, {
             result.l10n_ar_qr_code_base64 = this.l10n_ar_qr_code_base64 || '';
             result.terms_and_conditions = this.terms_and_conditions || '';
             
+            // Régimen de Transparencia Fiscal
             if (this.iva_taxes && this.iva_taxes.length > 0) {
+                // Asegurarnos de que cada elemento de iva_taxes tenga un ID único
                 result.iva_taxes = this.iva_taxes.map((tax, index) => {
                     return { ...tax, id: tax.id || `iva_tax_${index}` };
                 });
@@ -107,6 +136,7 @@ patch(Order.prototype, {
                 result.other_taxes_total = 0;
             }
             
+            // Transferir datos de impuestos desde el backend
             if (this.subtotal !== undefined && this.subtotal !== null) {
                 result.subtotal = this.subtotal;
             } else {
@@ -114,6 +144,7 @@ patch(Order.prototype, {
             }
             
             if (this.detailed_taxes && this.detailed_taxes.length > 0) {
+                // Asegurarnos de que cada elemento de detailed_taxes tenga un ID único
                 result.detailed_taxes = this.detailed_taxes.map((tax, index) => {
                     return { ...tax, id: tax.id || `tax_${index}` };
                 });
@@ -122,28 +153,30 @@ patch(Order.prototype, {
             }
         }
         
+        // Asegurarse de que total_with_tax esté definido para evitar errores de formateo
         if (result.total_with_tax === undefined || result.total_with_tax === null) {
             result.total_with_tax = 0;
         }
 
         return result;
     },
-    
+
+    // Sobreescribir el método init para establecer facturas automáticas
     init(obj, options) {
         super.init(...arguments);
-        // Aplicar facturación automática si está configurada
-        if (this.pos && this.pos.company && this.pos.company.auto_invoice) {
-            this.to_invoice = true;
+        if (this.pos && this.pos.config && this.pos.config.auto_invoice) {
+            this.set_to_invoice(true);
+            this.to_invoice = true; // Establecer directamente la propiedad
         }
     },
     
-    // Añadimos este método para asegurar que se aplique en cada restauración de la orden
+    // Cuando se cambia el cliente, aplicar auto factura si está configurado
     set_client(client) {
-        super.set_client(...arguments);
-        // Aplicar facturación automática si está configurada
-        if (this.pos && this.pos.company && this.pos.company.auto_invoice) {
-            this.to_invoice = true;
+        const result = super.set_client(...arguments);
+        if (this.pos && this.pos.config && this.pos.config.auto_invoice) {
+            this.set_to_invoice(true);
+            this.to_invoice = true; // Establecer directamente la propiedad
         }
-        return this;
+        return result;
     }
 });
