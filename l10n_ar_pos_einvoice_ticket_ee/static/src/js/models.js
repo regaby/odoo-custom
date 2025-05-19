@@ -3,6 +3,24 @@
 import { PosStore } from "@point_of_sale/app/store/pos_store";
 import { Order } from "@point_of_sale/app/store/models";
 import { patch } from "@web/core/utils/patch";
+import { PaymentScreen } from "@point_of_sale/app/screens/payment_screen/payment_screen";
+
+// Patch para la pantalla de pago para activar automáticamente la facturación
+patch(PaymentScreen.prototype, {
+    setup() {
+        super.setup(...arguments);
+        this.autoApplyInvoice();
+    },
+    
+    autoApplyInvoice() {
+        const order = this.env.services.pos.get_order();
+        if (order && this.env.services.pos.config.auto_invoice) {
+            order.set_to_invoice(true);
+            // Forzar actualización de la UI
+            this.render();
+        }
+    }
+});
 
 patch(PosStore.prototype, {
     async _flush_orders(orders, options) {
@@ -168,5 +186,16 @@ patch(Order.prototype, {
             this.set_to_invoice(true);
         }
         return result;
+    },
+
+    // Asegurar que la factura se establezca cuando se crea la orden
+    init(obj, options) {
+        super.init(...arguments);
+        // Aplicamos un pequeño retraso para asegurarnos de que POS esté completamente cargado
+        setTimeout(() => {
+            if (this.pos && this.pos.config && this.pos.config.auto_invoice) {
+                this.set_to_invoice(true);
+            }
+        }, 100);
     }
 });
