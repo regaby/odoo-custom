@@ -17,7 +17,11 @@
     'assets': {
         'point_of_sale._assets_pos': [
             'l10n_ar_pos_einvoice_ticket_ee/static/src/js/models.js',
+            'l10n_ar_pos_einvoice_ticket_ee/static/src/js/auto_invoice.js',
             'l10n_ar_pos_einvoice_ticket_ee/static/src/xml/pos.xml',
+        ],
+        'web.assets_backend': [
+            'l10n_ar_pos_einvoice_ticket_ee/static/src/js/auto_invoice.js',
         ],
     },
     'installable': True,
