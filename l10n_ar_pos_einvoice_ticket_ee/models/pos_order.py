@@ -5,6 +5,8 @@ import base64
 import qrcode
 from io import BytesIO
 import json
+from html import unescape
+import re
 
 _logger = logging.getLogger(__name__)
 
@@ -22,6 +24,16 @@ class PosOrder(models.Model):
         buffer = BytesIO()
         img.save(buffer, format="PNG")
         return base64.b64encode(buffer.getvalue()).decode('utf-8')
+    
+    def _html_to_text(self, html_content):
+        """Convierte HTML a texto plano (elimina las etiquetas HTML)"""
+        if not html_content:
+            return ''
+        # Desencodifica entidades HTML como &amp; a &
+        text = unescape(html_content)
+        # Elimina todas las etiquetas HTML
+        text = re.sub(r'<[^>]+>', '', text)
+        return text
 
     @api.model
     def create_from_ui(self, orders, draft=False):
@@ -48,6 +60,20 @@ class PosOrder(models.Model):
                     order['l10n_ar_cae'] = invoice.l10n_ar_afip_auth_code or ''
                     order['l10n_ar_cae_due_date'] = invoice.l10n_ar_afip_auth_code_due or ''
                     order['l10n_ar_qr_code_base64'] = qr_src
+                    
+                    # Obtener los términos y condiciones de la factura
+                    # Primero intentamos con narration (términos y condiciones)
+                    terms_and_conditions = ''
+                    if invoice.narration:
+                        terms_and_conditions = self._html_to_text(invoice.narration)
+                    # Si no hay narration, intentamos con invoice_payment_term_id
+                    elif invoice.invoice_payment_term_id and invoice.invoice_payment_term_id.note:
+                        terms_and_conditions = self._html_to_text(invoice.invoice_payment_term_id.note)
+                    # Si aún no hay, usamos las condiciones de pago de la compañía
+                    elif self.env.company.invoice_terms:
+                        terms_and_conditions = self._html_to_text(self.env.company.invoice_terms)
+                        
+                    order['terms_and_conditions'] = terms_and_conditions
                     
                     # Información específica para facturas tipo A
                     if doc_type and doc_type.l10n_ar_letter == 'A':
@@ -103,6 +129,7 @@ class PosOrder(models.Model):
                         _logger.info("💲 Subtotal: %s", subtotal)
                         _logger.info("💰 Tax Details: %s", json.dumps(tax_details))
                     
+                    _logger.info("📝 Términos y condiciones: %s", terms_and_conditions)
                     _logger.info("🔍 QR inicio: %s...", qr_src[:60] if qr_src else "N/A")
                     
                 except Exception as e:
