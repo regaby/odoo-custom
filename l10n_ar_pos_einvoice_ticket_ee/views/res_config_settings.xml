@@ -9,13 +9,13 @@
             <field name="arch" type="xml">
                 <xpath expr="//block[@id='pos_interface_section']" position="after">
                     <block title="POS einvoice Ticket" id="einvoice_ticket">
-                        <setting id="pos_auto_invoice" string="POS auto invoice" >
+                        <setting id="pos_auto_invoice" string="Facturar automáticamente" help="Activa automáticamente el botón de facturar en el POS">
                             <field name="pos_auto_invoice"/>
                         </setting>
-                        <setting id="pos_receipt_invoice_number" >
+                        <setting id="pos_receipt_invoice_number" string="Mostrar N° Factura" help="Muestra el número de factura en el ticket">
                             <field name="pos_receipt_invoice_number"/>
                         </setting>
-                        <setting id="pos_receipt_customer_vat" >
+                        <setting id="pos_receipt_customer_vat" string="Mostrar CUIT del cliente" help="Muestra el CUIT del cliente en el ticket">
                             <field name="pos_receipt_customer_vat"/>
                         </setting>
                     </block>
