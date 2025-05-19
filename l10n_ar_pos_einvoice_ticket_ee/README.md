@@ -1,5 +1,5 @@
 POS einvoice ticket
-===================
+====================
 
 
 Módulo para imprimir la factura eléctronica como ticket desde el POS.
