@@ -19,6 +19,7 @@ patch(PosStore.prototype, {
                 current_order.l10n_ar_cae = order.l10n_ar_cae || '';
                 current_order.l10n_ar_cae_due_date = order.l10n_ar_cae_due_date || '';
                 current_order.l10n_ar_qr_code_base64 = order.l10n_ar_qr_code_base64 || '';
+                current_order.terms_and_conditions = order.terms_and_conditions || '';
                 
                 // Añadir detalles de impuestos y subtotal si están disponibles
                 if (order.subtotal) {
@@ -71,6 +72,7 @@ patch(Order.prototype, {
             result.l10n_ar_cae = this.l10n_ar_cae || '';
             result.l10n_ar_cae_due_date = this.l10n_ar_cae_due_date || '';
             result.l10n_ar_qr_code_base64 = this.l10n_ar_qr_code_base64 || '';
+            result.terms_and_conditions = this.terms_and_conditions || '';
             
             // Transferir datos de impuestos desde el backend
             if (this.subtotal !== undefined && this.subtotal !== null) {
