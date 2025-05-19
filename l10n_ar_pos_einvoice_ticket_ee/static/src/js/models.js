@@ -3,40 +3,6 @@
 import { PosStore } from "@point_of_sale/app/store/pos_store";
 import { Order } from "@point_of_sale/app/store/models";
 import { patch } from "@web/core/utils/patch";
-import { ProductScreen } from "@point_of_sale/app/screens/product_screen/product_screen";
-import { usePos } from "@point_of_sale/app/store/pos_hook";
-
-// Patch para la pantalla de productos para activar automáticamente la facturación
-patch(ProductScreen.prototype, {
-    setup() {
-        super.setup(...arguments);
-        const pos = usePos();
-        // Observamos cuando se selecciona una orden
-        pos.orderManagement.on("order-selected", this._onOrderSelected.bind(this));
-    },
-
-    _onOrderSelected({ order }) {
-        if (order && this.env.services.pos.config.auto_invoice) {
-            order.set_to_invoice(true);
-        }
-    },
-
-    async _onClickCustomer() {
-        await super._onClickCustomer(...arguments);
-        const order = this.env.services.pos.get_order();
-        if (order && this.env.services.pos.config.auto_invoice) {
-            order.set_to_invoice(true);
-        }
-    },
-
-    async _onClickPay() {
-        const order = this.env.services.pos.get_order();
-        if (order && this.env.services.pos.config.auto_invoice) {
-            order.set_to_invoice(true);
-        }
-        await super._onClickPay(...arguments);
-    }
-});
 
 patch(PosStore.prototype, {
     async _flush_orders(orders, options) {
@@ -94,10 +60,27 @@ patch(PosStore.prototype, {
         await super._processConfig(...arguments);
         // Asegurarnos de que la configuración se carga
         this.config.auto_invoice = this.company.auto_invoice || false;
+    },
+    
+    // Sobreescribir el método de crear orden para aplicar auto factura
+    add_new_order() {
+        const order = super.add_new_order(...arguments);
+        if (this.config.auto_invoice) {
+            order.set_to_invoice(true);
+        }
+        return order;
+    },
+    
+    // Sobreescribir el método de seleccionar orden para aplicar auto factura
+    set_order(order) {
+        super.set_order(...arguments);
+        if (order && this.config.auto_invoice) {
+            order.set_to_invoice(true);
+        }
+        return order;
     }
 });
 
-// Patch para Order para establecer facturación automática en nuevas órdenes
 patch(Order.prototype, {
     export_for_printing() {
         const result = super.export_for_printing(...arguments);
@@ -178,11 +161,12 @@ patch(Order.prototype, {
         return result;
     },
 
-    // Sobreescribir el método init para establecer facturas automáticas
-    init(obj, options) {
-        super.init(...arguments);
+    // Cuando se cambia el cliente, aplicar auto factura si está configurado
+    set_client(client) {
+        const result = super.set_client(...arguments);
         if (this.pos && this.pos.config && this.pos.config.auto_invoice) {
             this.set_to_invoice(true);
         }
+        return result;
     }
 });
