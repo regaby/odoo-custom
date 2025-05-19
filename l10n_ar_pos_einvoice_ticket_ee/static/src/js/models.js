@@ -23,7 +23,12 @@ patch(PosStore.prototype, {
                 
                 // Régimen de Transparencia Fiscal
                 if (order.iva_taxes) {
-                    current_order.iva_taxes = order.iva_taxes;
+                    // Asegurarnos de que cada elemento de iva_taxes tenga un ID único
+                    current_order.iva_taxes = order.iva_taxes.map((tax, index) => {
+                        return { ...tax, id: tax.id || `iva_tax_${index}` };
+                    });
+                } else {
+                    current_order.iva_taxes = [];
                 }
                 
                 if (order.other_taxes_total !== undefined) {
@@ -38,7 +43,12 @@ patch(PosStore.prototype, {
                 }
                 
                 if (order.detailed_taxes) {
-                    current_order.detailed_taxes = order.detailed_taxes;
+                    // Asegurarnos de que cada elemento de detailed_taxes tenga un ID único
+                    current_order.detailed_taxes = order.detailed_taxes.map((tax, index) => {
+                        return { ...tax, id: tax.id || `tax_${index}` };
+                    });
+                } else {
+                    current_order.detailed_taxes = [];
                 }
             });
         }
@@ -86,8 +96,11 @@ patch(Order.prototype, {
             result.terms_and_conditions = this.terms_and_conditions || '';
             
             // Régimen de Transparencia Fiscal
-            if (this.iva_taxes) {
-                result.iva_taxes = this.iva_taxes;
+            if (this.iva_taxes && this.iva_taxes.length > 0) {
+                // Asegurarnos de que cada elemento de iva_taxes tenga un ID único
+                result.iva_taxes = this.iva_taxes.map((tax, index) => {
+                    return { ...tax, id: tax.id || `iva_tax_${index}` };
+                });
             } else {
                 result.iva_taxes = [];
             }
@@ -105,8 +118,11 @@ patch(Order.prototype, {
                 result.subtotal = 0;
             }
             
-            if (this.detailed_taxes) {
-                result.detailed_taxes = this.detailed_taxes;
+            if (this.detailed_taxes && this.detailed_taxes.length > 0) {
+                // Asegurarnos de que cada elemento de detailed_taxes tenga un ID único
+                result.detailed_taxes = this.detailed_taxes.map((tax, index) => {
+                    return { ...tax, id: tax.id || `tax_${index}` };
+                });
             } else {
                 result.detailed_taxes = [];
             }
