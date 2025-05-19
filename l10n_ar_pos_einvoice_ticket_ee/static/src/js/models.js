@@ -1,4 +1,3 @@
-
 /** @odoo-module */
 
 import { PosStore } from "@point_of_sale/app/store/pos_store";
@@ -11,6 +10,8 @@ patch(PosStore.prototype, {
         if (Array.isArray(result)) {
             result.forEach((order) => {
                 const current_order = this.get_order();
+                if (!current_order) return;
+                
                 current_order.invoice_number = order.invoice_number;
                 current_order.l10n_latam_document_type_id_name = order.l10n_latam_document_type_id_name;
                 current_order.l10n_latam_document_type_id_code = order.l10n_latam_document_type_id_code;
@@ -38,8 +39,9 @@ patch(Order.prototype, {
         const result = super.export_for_printing(...arguments);
         
         // Agregar datos de encabezado y configuración
+        result['headerData'] = result['headerData'] || {};
         result['headerData']['pos_name'] = this.pos.config.name;
-        result['headerData']['pos_street'] = this.pos.config.street;
+        result['headerData']['pos_street'] = this.pos.config.street || '';
         result['headerData']['date'] = result['date'];
         result['headerData']['receipt_invoice_number'] = this.pos.company.receipt_invoice_number;
         result['receipt_invoice_number'] = this.pos.company.receipt_invoice_number;
@@ -61,29 +63,16 @@ patch(Order.prototype, {
             result['l10n_ar_cae_due_date'] = this.l10n_ar_cae_due_date || '';
             result['l10n_ar_qr_code_base64'] = this.l10n_ar_qr_code_base64 || '';
             
-            // Asegurar que los datos de impuestos estén correctamente formateados
-            // Verificar si tenemos acceso a detailed_taxes desde el backend
-            if (this.detailed_taxes) {
-                result.tax_details_from_backend = this.detailed_taxes;
+            // Transferir datos de impuestos desde el backend en lugar de usar tax_details
+            if (this.subtotal) {
+                result.subtotal = this.subtotal;
             }
             
-            // Calcular subtotal sin impuestos (especialmente importante para facturas tipo A)
-            if (invoice_letter === 'A') {
-                if (this.subtotal) {
-                    // Usar el subtotal que viene del backend si está disponible
-                    result.total_without_tax = this.subtotal;
-                } else if (!result.total_without_tax) {
-                    // Calcular de forma alternativa si no está disponible
-                    result.total_without_tax = this.get_total_without_tax();
-                }
+            if (this.detailed_taxes) {
+                result.detailed_taxes = this.detailed_taxes;
             }
         }
 
         return result;
     },
-    
-    // Asegurar que tenemos este método para calcular el total sin impuestos
-    get_total_without_tax() {
-        return this.get_total_with_tax() - this.get_total_tax();
-    }
 });
