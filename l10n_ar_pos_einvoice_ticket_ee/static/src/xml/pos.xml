@@ -84,7 +84,7 @@
     <t t-inherit="point_of_sale.OrderReceipt" t-inherit-mode="extension">
         <!-- Aquí insertamos el subtotal y los impuestos ANTES del total nativo -->
         <xpath expr="//div[hasclass('pos-receipt-amount')]" position="before">
-            <!-- Para facturas tipo A (Responsable Inscripto) -->
+            <!-- Para facturas tipo A (Responsable Inscripto): Mostramos subtotal e impuestos discriminados -->
             <t t-if="props.data.invoice_letter == 'A' &amp;&amp; props.data.subtotal">
                 <!-- Línea punteada con ancho controlado -->
                 <div style="width: 100%; max-width: 100%; margin: 10px 0px 5px 0px; border-top: 1px dashed black; overflow: hidden;"></div>
@@ -103,6 +103,28 @@
                             <span t-esc="props.formatCurrency(tax.amount || 0)"/>
                         </div>
                     </t>
+                </t>
+            </t>
+            
+            <!-- Régimen de Transparencia Fiscal al Consumidor (Ley 27.743) SOLO para facturas Tipo B -->
+            <t t-if="props.data.invoice_letter == 'B' &amp;&amp; props.data.iva_taxes &amp;&amp; props.data.iva_taxes.length">
+                <div style="width: 100%; max-width: 100%; margin: 15px 0px 5px 0px; border-top: 1px dashed black; overflow: hidden;"></div>
+                <div style="font-weight: bold; margin: 8px 0 5px 0;">Régimen de Transparencia Fiscal al Consumidor (Ley 27.743)</div>
+                
+                <!-- Impuestos IVA -->
+                <t t-foreach="props.data.iva_taxes" t-as="iva_tax" t-key="iva_index">
+                    <div style="display: flex; justify-content: space-between; margin-top: 3px;">
+                        <span>IVA contenido: <t t-esc="iva_tax.alicuota"/>%</span>
+                        <span t-esc="props.formatCurrency(iva_tax.amount || 0)"/>
+                    </div>
+                </t>
+                
+                <!-- Otros impuestos nacionales indirectos (solo si hay) -->
+                <t t-if="props.data.other_taxes_total > 0">
+                    <div style="display: flex; justify-content: space-between; margin-top: 3px;">
+                        <span>Otros impuestos nacionales indirectos:</span>
+                        <span t-esc="props.formatCurrency(props.data.other_taxes_total || 0)"/>
+                    </div>
                 </t>
             </t>
         </xpath>
