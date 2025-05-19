@@ -1,3 +1,4 @@
+
 /** @odoo-module */
 
 import { PosStore } from "@point_of_sale/app/store/pos_store";
@@ -17,6 +18,15 @@ patch(PosStore.prototype, {
                 current_order.l10n_ar_cae = order.l10n_ar_cae;
                 current_order.l10n_ar_cae_due_date = order.l10n_ar_cae_due_date;
                 current_order.l10n_ar_qr_code_base64 = order.l10n_ar_qr_code_base64;
+                
+                // Añadir detalles de impuestos y subtotal si están disponibles
+                if (order.subtotal) {
+                    current_order.subtotal = order.subtotal;
+                }
+                
+                if (order.detailed_taxes) {
+                    current_order.detailed_taxes = order.detailed_taxes;
+                }
             });
         }
         return result;
@@ -26,12 +36,15 @@ patch(PosStore.prototype, {
 patch(Order.prototype, {
     export_for_printing() {
         const result = super.export_for_printing(...arguments);
+        
+        // Agregar datos de encabezado y configuración
         result['headerData']['pos_name'] = this.pos.config.name;
         result['headerData']['pos_street'] = this.pos.config.street;
         result['headerData']['date'] = result['date'];
         result['headerData']['receipt_invoice_number'] = this.pos.company.receipt_invoice_number;
         result['receipt_invoice_number'] = this.pos.company.receipt_invoice_number;
 
+        // Si hay factura, añadir datos específicos de factura
         if (this.invoice_number) {
             const invoice_letter = this.invoice_number.split(" ")[0]?.substring(3, 4) || '';
             const invoice_number = this.invoice_number.split(" ")[1] || '';
@@ -47,8 +60,30 @@ patch(Order.prototype, {
             result['l10n_ar_cae'] = this.l10n_ar_cae || '';
             result['l10n_ar_cae_due_date'] = this.l10n_ar_cae_due_date || '';
             result['l10n_ar_qr_code_base64'] = this.l10n_ar_qr_code_base64 || '';
+            
+            // Asegurar que los datos de impuestos estén correctamente formateados
+            // Verificar si tenemos acceso a detailed_taxes desde el backend
+            if (this.detailed_taxes) {
+                result.tax_details_from_backend = this.detailed_taxes;
+            }
+            
+            // Calcular subtotal sin impuestos (especialmente importante para facturas tipo A)
+            if (invoice_letter === 'A') {
+                if (this.subtotal) {
+                    // Usar el subtotal que viene del backend si está disponible
+                    result.total_without_tax = this.subtotal;
+                } else if (!result.total_without_tax) {
+                    // Calcular de forma alternativa si no está disponible
+                    result.total_without_tax = this.get_total_without_tax();
+                }
+            }
         }
 
         return result;
     },
+    
+    // Asegurar que tenemos este método para calcular el total sin impuestos
+    get_total_without_tax() {
+        return this.get_total_with_tax() - this.get_total_tax();
+    }
 });
