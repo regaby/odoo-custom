@@ -106,8 +106,8 @@
                 </t>
             </t>
             
-            <!-- Régimen de Transparencia Fiscal al Consumidor (Ley 27.743) SOLO para facturas Tipo B -->
-            <t t-if="props.data.invoice_letter == 'B' &amp;&amp; props.data.iva_taxes &amp;&amp; props.data.iva_taxes.length">
+            <!-- Régimen de Transparencia Fiscal al Consumidor (Ley 27.743) SOLO para facturas Tipo B (o cualquier tipo que no sea A) -->
+            <t t-if="props.data.invoice_letter != 'A' &amp;&amp; props.data.iva_taxes &amp;&amp; props.data.iva_taxes.length">
                 <div style="width: 100%; max-width: 100%; margin: 15px 0px 5px 0px; border-top: 1px dashed black; overflow: hidden;"></div>
                 <div style="font-weight: bold; margin: 8px 0 5px 0;">Régimen de Transparencia Fiscal al Consumidor (Ley 27.743)</div>
                 
