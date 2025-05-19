@@ -1,7 +1,8 @@
+
 # -*- coding: utf-8 -*-
 {
     'name': 'POS eInvoice Ticket',
-    'version': '17.0.0.1',
+    'version': '17.0.0.2',
     'author': 'Ing. Gabriela Rivero',
     'license': 'LGPL-3',
     'category': 'Point Of Sale',
@@ -22,5 +23,24 @@
     },
     'installable': True,
     'application': False,
-}
+    'description': """
+POS eInvoice Ticket
+===================
 
+Este módulo permite imprimir la factura electrónica como ticket desde el POS de Odoo, cumpliendo con los requisitos de la AFIP para la localización argentina.
+
+Características principales:
+---------------------------
+* Generación de QR AFIP en tickets
+* Discriminación de impuestos en facturas tipo A
+* Visualización de datos fiscales del cliente y la empresa
+* Múltiples opciones de configuración
+
+Configuración
+------------
+En la configuración del punto de venta se puede habilitar:
+* Auto facturación
+* Mostrar número de factura
+* Mostrar CUIT del cliente
+    """,
+}
