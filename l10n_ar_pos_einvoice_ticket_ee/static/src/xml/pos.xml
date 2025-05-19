@@ -86,7 +86,8 @@
         <xpath expr="//div[hasclass('pos-receipt-amount')]" position="before">
             <!-- Para facturas tipo A (Responsable Inscripto) -->
             <t t-if="props.data.invoice_letter == 'A' &amp;&amp; props.data.subtotal">
-                <div style="border-top: 1px dashed black; margin: 10px 0px 5px 0px;"></div>
+                <!-- Línea punteada con ancho controlado -->
+                <div style="width: 100%; max-width: 100%; margin: 10px 0px 5px 0px; border-top: 1px dashed black; overflow: hidden;"></div>
                 
                 <!-- Subtotal sin impuestos -->
                 <div style="display: flex; justify-content: space-between; margin-top: 5px;">
