@@ -1,4 +1,4 @@
-# POS eInvoice Ticket para Odoo 17 - Argentina
+# POS eInvoice Ticket para Odoo 17 Enterprise - Argentina
 
 ## Descripción
 Este módulo permite imprimir facturas electrónicas como tickets desde el Punto de Venta (POS) de Odoo, cumpliendo con todos los requisitos fiscales de AFIP (Administración Federal de Ingresos Públicos) para la localización argentina.
@@ -30,10 +30,9 @@ Este módulo permite imprimir facturas electrónicas como tickets desde el Punto
 3. Actualice la lista de aplicaciones
 4. Instale el módulo "POS eInvoice Ticket"
 
-### Dependencias
-- `point_of_sale`: Módulo base del Punto de Venta de Odoo
-- `l10n_ar`: Localización argentina para Odoo
-- `l10n_ar_edi`: Facturación electrónica oficial para Argentina en Odoo Enterprise
+### Requisitos
+- **Odoo 17.0 Enterprise** (este módulo NO es compatible con la versión Community)
+- Módulos Enterprise activados: l10n_ar_edi
 
 ## Configuración
 
