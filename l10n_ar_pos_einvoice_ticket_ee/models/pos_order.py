@@ -75,47 +75,99 @@ class PosOrder(models.Model):
                         
                     order['terms_and_conditions'] = terms_and_conditions
                     
-                    # Información específica para facturas tipo A
-                    if doc_type and doc_type.l10n_ar_letter == 'A':
-                        # Calcular y agregar subtotal e impuestos
-                        subtotal = invoice.amount_untaxed
-                        order['subtotal'] = subtotal
+                    # Procesamiento de impuestos para todas las facturas (A y B)
+                    subtotal = invoice.amount_untaxed
+                    order['subtotal'] = subtotal
+                    
+                    # Detalle de impuestos para todas las facturas
+                    # Agruparemos los impuestos en:
+                    # 1. IVA (por alícuota)
+                    # 2. Otros impuestos nacionales
+                    
+                    iva_taxes = {}  # Para agrupar IVA por alícuota
+                    other_taxes = []  # Para otros impuestos
+                    
+                    # Recorrer líneas de factura y sus impuestos
+                    for line in invoice.invoice_line_ids:
+                        base_imponible = line.price_subtotal
                         
-                        # Detalles de impuestos - usando invoice_line_ids y sus tax_ids
-                        tax_details = []
-                        
-                        # En Odoo 17, debemos usar invoice_line_ids y sus tax_ids
-                        # Obtener todos los impuestos aplicados a la factura
-                        tax_groups = {}
-                        
-                        for line in invoice.invoice_line_ids:
-                            for tax in line.tax_ids:
-                                try:
-                                    # Calcular el monto del impuesto para esta línea
-                                    tax_amount = line.price_subtotal * (tax.amount / 100.0)
-                                    
-                                    # Agrupar por ID de impuesto
-                                    if tax.id not in tax_groups:
-                                        tax_groups[tax.id] = {
-                                            'id': tax.id,
-                                            'name': tax.name or '',
-                                            'invoice_label': tax.invoice_label or tax.name or '',
-                                            'amount': 0,
-                                            'tax_group': tax.tax_group_id.name if tax.tax_group_id else ''
-                                        }
-                                    
-                                    tax_groups[tax.id]['amount'] += tax_amount
-                                    
-                                except Exception as e:
-                                    _logger.error("Error procesando impuesto %s: %s", tax.name, str(e))
-                        
-                        # Convertir el diccionario a lista
-                        tax_details = list(tax_groups.values())
-                        
-                        # Ordenar por monto de mayor a menor
-                        tax_details.sort(key=lambda x: x['amount'], reverse=True)
-                        
-                        order['detailed_taxes'] = tax_details
+                        for tax in line.tax_ids:
+                            # Verificar si es un impuesto de IVA
+                            is_iva = tax.tax_group_id and tax.tax_group_id.l10n_ar_vat_afip_code in ['3', '4', '5', '6', '8', '9']
+                            
+                            if is_iva:
+                                # Es un impuesto de IVA
+                                alicuota = tax.amount
+                                tax_amount = base_imponible * (alicuota / 100.0)
+                                
+                                # Agrupar por alícuota
+                                if alicuota not in iva_taxes:
+                                    iva_taxes[alicuota] = {
+                                        'alicuota': alicuota,
+                                        'amount': 0,
+                                        'base_imponible': 0,
+                                        'name': tax.name,
+                                        'invoice_label': tax.invoice_label or tax.name
+                                    }
+                                
+                                iva_taxes[alicuota]['amount'] += tax_amount
+                                iva_taxes[alicuota]['base_imponible'] += base_imponible
+                            else:
+                                # Otro tipo de impuesto (no IVA)
+                                tax_amount = base_imponible * (tax.amount / 100.0)
+                                
+                                # Verificar si ya existe en la lista
+                                existing_tax = next((t for t in other_taxes if t.get('id') == tax.id), None)
+                                
+                                if existing_tax:
+                                    existing_tax['amount'] += tax_amount
+                                else:
+                                    other_taxes.append({
+                                        'id': tax.id,
+                                        'name': tax.name,
+                                        'amount': tax_amount,
+                                        'invoice_label': tax.invoice_label or tax.name
+                                    })
+                    
+                    # Convertir diccionario de IVA a lista
+                    iva_tax_list = list(iva_taxes.values())
+                    # Ordenar por alícuota
+                    iva_tax_list.sort(key=lambda x: x['alicuota'], reverse=True)
+                    
+                    # Calcular el total de otros impuestos
+                    other_taxes_total = sum(tax['amount'] for tax in other_taxes)
+                    
+                    # Guardar información para el front-end
+                    order['iva_taxes'] = iva_tax_list
+                    order['other_taxes_total'] = other_taxes_total
+                    
+                    # Para mantener compatibilidad con el código existente
+                    # Combinar todos los impuestos para detailed_taxes
+                    tax_details = []
+                    
+                    # Añadir impuestos de IVA
+                    for iva in iva_tax_list:
+                        tax_details.append({
+                            'name': iva['name'],
+                            'invoice_label': iva['invoice_label'],
+                            'amount': iva['amount'],
+                            'is_iva': True,
+                            'alicuota': iva['alicuota']
+                        })
+                    
+                    # Añadir otros impuestos
+                    for tax in other_taxes:
+                        tax_details.append({
+                            'name': tax['name'],
+                            'invoice_label': tax['invoice_label'],
+                            'amount': tax['amount'],
+                            'is_iva': False
+                        })
+                    
+                    # Ordenar por monto (mayor a menor)
+                    tax_details.sort(key=lambda x: x['amount'], reverse=True)
+                    
+                    order['detailed_taxes'] = tax_details
 
                     # Log detallado para depuración
                     _logger.info("📄 Invoice ID: %s", invoice.id)
@@ -124,10 +176,10 @@ class PosOrder(models.Model):
                         _logger.info("📄 Doc Type fields: %s", doc_type.read(['name', 'report_name', 'code', 'l10n_ar_letter']))
                         _logger.info("📌 Letra: %s", doc_type.l10n_ar_letter)
                     
-                    # Log de impuestos para facturas tipo A
-                    if doc_type and doc_type.l10n_ar_letter == 'A':
-                        _logger.info("💲 Subtotal: %s", subtotal)
-                        _logger.info("💰 Tax Details: %s", json.dumps(tax_details))
+                    # Log de impuestos para facturas
+                    _logger.info("💲 Subtotal: %s", subtotal)
+                    _logger.info("💰 IVA Taxes: %s", json.dumps(iva_tax_list))
+                    _logger.info("💰 Other Taxes: %s", other_taxes_total)
                     
                     _logger.info("📝 Términos y condiciones: %s", terms_and_conditions)
                     _logger.info("🔍 QR inicio: %s...", qr_src[:60] if qr_src else "N/A")
