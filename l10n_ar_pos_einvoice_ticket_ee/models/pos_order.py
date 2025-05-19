@@ -103,6 +103,7 @@ class PosOrder(models.Model):
                                 # Agrupar por alícuota
                                 if alicuota not in iva_taxes:
                                     iva_taxes[alicuota] = {
+                                        'id': f'iva_{alicuota}',  # ID único para cada alícuota
                                         'alicuota': alicuota,
                                         'amount': 0,
                                         'base_imponible': 0,
@@ -117,13 +118,14 @@ class PosOrder(models.Model):
                                 tax_amount = base_imponible * (tax.amount / 100.0)
                                 
                                 # Verificar si ya existe en la lista
-                                existing_tax = next((t for t in other_taxes if t.get('id') == tax.id), None)
+                                existing_tax = next((t for t in other_taxes if t.get('tax_id') == tax.id), None)
                                 
                                 if existing_tax:
                                     existing_tax['amount'] += tax_amount
                                 else:
                                     other_taxes.append({
-                                        'id': tax.id,
+                                        'id': f'tax_{tax.id}',  # ID único para cada impuesto
+                                        'tax_id': tax.id,
                                         'name': tax.name,
                                         'amount': tax_amount,
                                         'invoice_label': tax.invoice_label or tax.name
@@ -148,6 +150,7 @@ class PosOrder(models.Model):
                     # Añadir impuestos de IVA
                     for iva in iva_tax_list:
                         tax_details.append({
+                            'id': iva['id'],  # ID único para cada impuesto
                             'name': iva['name'],
                             'invoice_label': iva['invoice_label'],
                             'amount': iva['amount'],
@@ -158,6 +161,7 @@ class PosOrder(models.Model):
                     # Añadir otros impuestos
                     for tax in other_taxes:
                         tax_details.append({
+                            'id': tax['id'],  # ID único para cada impuesto
                             'name': tax['name'],
                             'invoice_label': tax['invoice_label'],
                             'amount': tax['amount'],
