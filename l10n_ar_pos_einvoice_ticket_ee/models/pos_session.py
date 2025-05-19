@@ -1,3 +1,4 @@
+
 from odoo import models
 
 
@@ -46,6 +47,7 @@ class PosSession(models.Model):
                     'include_base_amount', 
                     'tax_group_id',
                     'amount_type',
+                    # No incluir 'children_tax_ids' ya que causa el error
                 ],
             },
         }
