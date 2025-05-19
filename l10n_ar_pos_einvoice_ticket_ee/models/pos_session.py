@@ -1,4 +1,3 @@
-
 from odoo import models
 
 
@@ -29,25 +28,25 @@ class PosSession(models.Model):
             'country_id',
         ]
         return res
-        
-    def _pos_ui_models_to_load(self):
-        models = super()._pos_ui_models_to_load()
-        if 'account.tax' not in models:
-            models.append('account.tax')
-        return models
-
-    def _loader_params_account_tax(self):
-        return {
-            'search_params': {
-                'domain': [('company_id', '=', self.config_id.company_id.id)],
-                'fields': [
-                    'name', 
-                    'amount', 
-                    'price_include', 
-                    'include_base_amount', 
-                    'tax_group_id',
-                    'amount_type',
-                    # No incluir 'children_tax_ids' ya que causa el error
-                ],
-            },
-        }
+    
+    # Eliminamos la carga del modelo account.tax que está causando problemas
+    # def _pos_ui_models_to_load(self):
+    #     models = super()._pos_ui_models_to_load()
+    #     if 'account.tax' not in models:
+    #         models.append('account.tax')
+    #     return models
+    # 
+    # def _loader_params_account_tax(self):
+    #     return {
+    #         'search_params': {
+    #             'domain': [('company_id', '=', self.config_id.company_id.id)],
+    #             'fields': [
+    #                 'name', 
+    #                 'amount', 
+    #                 'price_include', 
+    #                 'include_base_amount', 
+    #                 'tax_group_id',
+    #                 'amount_type',
+    #             ],
+    #         },
+    #     }
