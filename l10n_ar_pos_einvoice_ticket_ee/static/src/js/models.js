@@ -76,6 +76,7 @@ patch(Order.prototype, {
             if (this.subtotal !== undefined && this.subtotal !== null) {
                 result.subtotal = this.subtotal;
             } else {
+                // No llamar a get_total_without_tax para evitar recursión
                 result.subtotal = 0;
             }
             
@@ -96,15 +97,7 @@ patch(Order.prototype, {
         }
 
         return result;
-    },
-    
-    // Asegurar que tenemos este método para calcular el total sin impuestos
-    get_total_without_tax() {
-        try {
-            return this.get_total_with_tax() - this.get_total_tax();
-        } catch (error) {
-            console.error("Error al calcular total sin impuestos:", error);
-            return 0;
-        }
     }
+    
+    // Eliminamos la sobrescritura de get_total_without_tax para evitar recursión
 });
