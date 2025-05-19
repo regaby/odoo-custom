@@ -110,6 +110,13 @@
         <xpath expr="//div[@class='before-footer']" position="after">
             <t t-if="props.data.l10n_ar_cae || props.data.l10n_ar_qr_code_base64">
                 <div class="afip-cae-info" style="text-align: center; margin-top: 15px; padding-top: 10px; border-top: 1px dashed black;">
+                    <!-- Términos y condiciones -->
+                    <t t-if="props.data.terms_and_conditions">
+                        <div style="text-align: left; font-size: 85%; margin-bottom: 15px; white-space: pre-line; line-height: 1.3;">
+                            <t t-esc="props.data.terms_and_conditions"/>
+                        </div>
+                    </t>
+                    
                     <t t-if="props.data.l10n_ar_qr_code_base64">
                         <div style="margin: 0 auto; width: 160px; height: 160px;">
                             <img t-att-src="'data:image/png;base64,' + props.data.l10n_ar_qr_code_base64" style="width:100%; height:100%;" />
