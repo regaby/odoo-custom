@@ -72,20 +72,15 @@ patch(Order.prototype, {
             result.l10n_ar_cae_due_date = this.l10n_ar_cae_due_date || '';
             result.l10n_ar_qr_code_base64 = this.l10n_ar_qr_code_base64 || '';
             
-            // Transferir datos de impuestos desde el backend en lugar de usar tax_details
+            // Transferir datos de impuestos desde el backend
             if (this.subtotal !== undefined && this.subtotal !== null) {
                 result.subtotal = this.subtotal;
             } else {
-                // No llamar a get_total_without_tax para evitar recursión
                 result.subtotal = 0;
             }
             
             if (this.detailed_taxes) {
-                result.detailed_taxes = this.detailed_taxes.map(tax => ({
-                    name: tax.name || '',
-                    amount: tax.amount || 0,
-                    tax_group: tax.tax_group || ''
-                }));
+                result.detailed_taxes = this.detailed_taxes;
             } else {
                 result.detailed_taxes = [];
             }
@@ -98,6 +93,4 @@ patch(Order.prototype, {
 
         return result;
     }
-    
-    // Eliminamos la sobrescritura de get_total_without_tax para evitar recursión
 });
